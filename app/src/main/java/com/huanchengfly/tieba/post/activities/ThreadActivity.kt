@@ -128,12 +128,9 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
         }
 
     private fun refreshTitle() {
-        if (dataBean != null && dataBean!!.thread != null && isTitleVisible) {
-            toolbar.title = dataBean!!.thread?.title
-            //toolbar.setSubtitle(getString(R.string.title_forum, dataBean.getForum().getName()));
-        } else {
-            toolbar.title = null
-            //toolbar.setSubtitle(null);
+        toolbar.title = null
+        dataBean?.let {
+            toolbar.title = if (isTitleVisible) it.thread.title else ""
         }
     }
 
@@ -265,7 +262,7 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
     }
 
     fun hasMore(): Boolean {
-        if (dataBean!!.page?.hasMore != "1") {
+        if (dataBean!!.page.hasMore != "1") {
             mAdapter.loadEnd()
             return false
         }
@@ -274,9 +271,11 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
 
     private fun loadMoreSuccess(threadContentBean: ThreadContentBean) {
         dataBean = threadContentBean
-        page = Integer.valueOf(threadContentBean.page?.currentPage!!)
-        totalPage = Integer.valueOf(threadContentBean.page.totalPage!!)
-        mAdapter.addData(dataBean!!)
+        page = Integer.valueOf(threadContentBean.page.currentPage)
+        totalPage = Integer.valueOf(threadContentBean.page.totalPage)
+        dataBean?.let {
+            mAdapter.addData(it)
+        }
         hasMore()
         invalidateOptionsMenu()
         preload()
@@ -323,15 +322,15 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
 
     private fun refreshSuccess(threadContentBean: ThreadContentBean) {
         dataBean = threadContentBean
-        page = Integer.valueOf(threadContentBean.page?.currentPage!!)
-        totalPage = Integer.valueOf(threadContentBean.page.totalPage!!)
+        page = Integer.valueOf(threadContentBean.page.currentPage)
+        totalPage = Integer.valueOf(threadContentBean.page.totalPage)
         mAdapter.reset()
         mAdapter.setData(threadContentBean)
-        title = threadContentBean.thread?.title
-        collect = threadContentBean.thread != null && "0" != threadContentBean.thread.collectStatus
-        agree = threadContentBean.thread?.agree != null && "0" != threadContentBean.thread.agree.hasAgree
-        agreeNumTextView.text = threadContentBean.thread?.agreeNum
-        agreeNum = Integer.valueOf(if (TextUtils.isEmpty(threadContentBean.thread?.agreeNum)) "0" else threadContentBean.thread?.agreeNum!!)
+        title = threadContentBean.thread.title
+        collect = "0" != threadContentBean.thread.collectStatus
+        agree = "0" != threadContentBean.thread.agree.hasAgree
+        agreeNumTextView.text = threadContentBean.thread.agreeNum
+        agreeNum = Integer.valueOf(if (TextUtils.isEmpty(threadContentBean.thread.agreeNum)) "0" else threadContentBean.thread.agreeNum)
         invalidateOptionsMenu()
         hasMore()
         refreshLayout.isRefreshing = false
@@ -415,7 +414,7 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
                                     .show()
                         }
                     }
-                    if (pid != threadContentBean.postList?.get(0)?.id) {
+                    if (pid != threadContentBean.postList.get(0).id) {
                         val position = mAdapter.allData.indexOf(postListItemBean)
                         if (position >= 0) mLayoutManager.scrollToPositionWithOffset(position, 0)
                     }
@@ -443,8 +442,8 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
             override fun onResponse(call: Call<ThreadContentBean>, response: Response<ThreadContentBean>) {
                 val threadContentBean = response.body()!!
                 dataBean = threadContentBean
-                page = Integer.valueOf(threadContentBean.page?.currentPage!!)
-                totalPage = Integer.valueOf(threadContentBean.page.totalPage!!)
+                page = Integer.valueOf(threadContentBean.page.currentPage)
+                totalPage = Integer.valueOf(threadContentBean.page.totalPage)
                 refresh(pid)
             }
 
@@ -475,18 +474,18 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun isLz(postListItemBean: PostListItemBean?): Boolean {
-        return dataBean!!.thread != null && dataBean!!.thread?.author != null && postListItemBean != null &&
-                TextUtils.equals(dataBean!!.thread?.author?.id, postListItemBean.authorId)
+        return postListItemBean != null && TextUtils.equals(dataBean!!.thread.author.id, postListItemBean.authorId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_report -> navigationHelper!!.navigationByData(NavigationHelper.ACTION_URL,
                     getString(R.string.url_post_report,
-                            dataBean!!.forum?.id,
-                            dataBean!!.thread?.threadId,
-                            dataBean!!.thread?.postId))
-            R.id.menu_share -> TiebaUtil.shareText(this, url, if (dataBean == null) null else dataBean!!.thread?.title)
+                        dataBean!!.forum.id,
+                        dataBean!!.thread.threadId,
+                        dataBean!!.thread.postId
+                    ))
+            R.id.menu_share -> TiebaUtil.shareText(this, url, if (dataBean == null) null else dataBean!!.thread.title)
             R.id.menu_jump_page -> {
                 val dialog = EditTextDialog(this)
                         .setInputType(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL)
@@ -510,7 +509,7 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
                 if (postListItemBean == null || !isLz(postListItemBean)) {
                     refresh()
                 } else {
-                    refreshByPid(postListItemBean.id!!)
+                    refreshByPid(postListItemBean.id)
                 }
             }
             R.id.menu_sort -> {
@@ -527,7 +526,9 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
             } else {
                 mAdapter.isImmersive = false
             }
-            R.id.menu_delete -> TiebaApi.getInstance().delThread(dataBean!!.forum?.id!!, dataBean!!.forum?.name!!, dataBean!!.thread?.id!!, dataBean!!.anti?.tbs!!).enqueue(object : Callback<CommonResponse> {
+            R.id.menu_delete -> TiebaApi.getInstance().delThread(dataBean!!.forum.id,
+                dataBean!!.forum.name, dataBean!!.thread.id, dataBean!!.anti.tbs
+            ).enqueue(object : Callback<CommonResponse> {
                 override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                     Toast.makeText(this@ThreadActivity, getString(R.string.toast_delete_error, t.message), Toast.LENGTH_SHORT).show()
                 }
@@ -539,9 +540,9 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
 
             })
             R.id.menu_collect -> {
-                if (dataBean != null) {
+                dataBean?.let {
                     if (collect) {
-                        TiebaApi.getInstance().removeStore(tid!!, dataBean!!.anti?.tbs!!).enqueue(object : Callback<CommonResponse> {
+                        TiebaApi.getInstance().removeStore(tid!!, it.anti.tbs).enqueue(object : Callback<CommonResponse> {
                             override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                                 Toast.makeText(this@ThreadActivity, getString(R.string.toast_collect_remove_error, t.message), Toast.LENGTH_SHORT).show()
                             }
@@ -600,7 +601,7 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
     private fun collect(commonAPICallback: CommonAPICallback<CommonResponse>?, update: Boolean) {
         if (dataBean == null || tid == null) return
         val postListItemBean = firstVisibleItem ?: return
-        TiebaApi.getInstance().addStore(tid!!, postListItemBean.id!!, tbs = dataBean!!.anti?.tbs!!).enqueue(object : Callback<CommonResponse> {
+        TiebaApi.getInstance().addStore(tid!!, postListItemBean.id, tbs = dataBean!!.anti.tbs).enqueue(object : Callback<CommonResponse> {
             override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 if (t is TiebaException) {
                     commonAPICallback?.onFailure(t.code, t.message)
@@ -614,7 +615,7 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
             }
 
         })
-        if (!update) Util.miuiFav(this, getString(R.string.title_miui_fav, dataBean!!.thread?.title), url)
+        if (!update) Util.miuiFav(this, getString(R.string.title_miui_fav, dataBean!!.thread.title), url)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -664,12 +665,15 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
         } else {
             itemPure.setTitle(R.string.title_pure_read)
         }
-        itemDelete.isVisible = dataBean != null && TextUtils.equals(dataBean!!.user?.id, dataBean!!.thread?.author?.id)
+        itemDelete.isVisible = false
+        dataBean?.let {
+            itemDelete.isVisible = TextUtils.equals(dataBean!!.user.id, it.thread.author.id)
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun finish() {
-        if (dataBean != null && dataBean!!.thread != null) {
+        dataBean?.let {
             val postListItemBean = lastVisibleItem
             var extras = ""
             if (postListItemBean != null) {
@@ -681,12 +685,10 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
             val history = History()
                     .setData(tid)
                     .setExtras(extras)
-                    .setTitle(dataBean!!.thread?.title)
+                    .setTitle(it.thread.title)
                     .setType(HistoryHelper.TYPE_THREAD)
-            if (dataBean!!.thread?.author != null) {
-                history.avatar = dataBean!!.thread?.author?.portrait
-                history.username = dataBean!!.thread?.author?.nameShow
-            }
+            history.avatar = it.thread.author.portrait
+            history.username = it.thread.author.nameShow
             historyHelper!!.writeHistory(history)
         }
         super.finish()
@@ -732,21 +734,25 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.thread_reply_bar -> if (dataBean != null && dataBean!!.thread != null) {
+            R.id.thread_reply_bar -> dataBean?.let {
                 startActivity(Intent(this@ThreadActivity, ReplyActivity::class.java)
-                        .putExtra("data", ReplyInfoBean(dataBean!!.thread?.id,
-                                dataBean!!.forum?.id,
-                                dataBean!!.forum?.name,
-                                dataBean!!.anti?.tbs,
-                                dataBean!!.user?.nameShow).setPn(dataBean!!.page?.offset).toString()))
+                        .putExtra("data", ReplyInfoBean(
+                            it.thread.id,
+                            it.forum.id,
+                            it.forum.name,
+                            it.anti.tbs,
+                            it.user.nameShow
+                        ).setPn(it.page.offset).toString()))
             }
             R.id.toolbar -> recyclerView.scrollToPosition(0)
-            R.id.thread_bottom_bar_agree -> if (dataBean != null && dataBean!!.thread != null) {
+            R.id.thread_bottom_bar_agree -> dataBean?.let {
                 if (!agree) {
                     agree = true
                     agreeNum += 1
                     invalidateAgreeStatus()
-                    TiebaApi.getInstance().agree(dataBean!!.thread?.threadInfo?.threadId!!, dataBean!!.thread?.threadInfo?.firstPostId!!).enqueue(object : Callback<AgreeBean> {
+                    TiebaApi.getInstance().agree(it.thread.threadInfo.threadId,
+                        it.thread.threadInfo.firstPostId
+                    ).enqueue(object : Callback<AgreeBean> {
                         override fun onFailure(call: Call<AgreeBean>, t: Throwable) {
                             agree = false
                             agreeNum -= 1
@@ -765,7 +771,9 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
                     agree = false
                     agreeNum -= 1
                     invalidateAgreeStatus()
-                    TiebaApi.getInstance().disagree(dataBean!!.thread?.threadInfo?.threadId!!, dataBean!!.thread?.threadInfo?.firstPostId!!).enqueue(object : Callback<AgreeBean> {
+                    TiebaApi.getInstance().disagree(it.thread.threadInfo.threadId,
+                        it.thread.threadInfo.firstPostId
+                    ).enqueue(object : Callback<AgreeBean> {
                         override fun onFailure(call: Call<AgreeBean>, t: Throwable) {
                             agree = true
                             agreeNum += 1

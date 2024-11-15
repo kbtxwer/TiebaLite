@@ -164,6 +164,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
                     override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
                         val subFloorListBean = response.body() ?: return
                         dataBean = subFloorListBean
+
                         recyclerViewAdapter!!.setData(subFloorListBean)
                         if (subFloorListBean.page!!.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
                             recyclerViewAdapter!!.loadEnd()

@@ -72,10 +72,12 @@ object QuickPreviewUtil {
             override fun onResponse(call: Call<ThreadContentBean>, response: Response<ThreadContentBean>) {
                 val threadContentBean = response.body()!!
                 callback.onSuccess(PreviewInfo()
-                        .setTitle(threadContentBean.thread?.title)
-                        .setSubtitle(context.getString(R.string.subtitle_quick_preview_thread, threadContentBean.forum?.name, threadContentBean.thread?.replyNum))
+                        .setTitle(threadContentBean.thread.title)
+                        .setSubtitle(context.getString(R.string.subtitle_quick_preview_thread,
+                            threadContentBean.forum.name, threadContentBean.thread.replyNum
+                        ))
                         .setUrl(uri.toString())
-                        .setIconUrl(threadContentBean.thread?.author?.portrait))
+                        .setIconUrl(threadContentBean.thread.author.portrait))
             }
         })
     }

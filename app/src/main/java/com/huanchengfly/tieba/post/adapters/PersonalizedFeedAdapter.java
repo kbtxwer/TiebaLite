@@ -192,7 +192,7 @@ public class PersonalizedFeedAdapter extends MultiBaseAdapter<PersonalizedBean.T
             textView.setVisibility(View.GONE);
         }
         PersonalizedBean.AuthorBean authorBean = threadBean.getAuthor();
-        if (authorBean != null) {
+        if (!authorBean.getPortrait().isEmpty()) {
             viewHolder.setOnClickListener(R.id.forum_item_user_avatar, v -> NavigationHelper.toUserSpaceWithAnim(mContext, authorBean.getId(), authorBean.getPortrait(), v));
             viewHolder.setText(R.id.forum_item_user_name, authorBean.getNameShow());
             viewHolder.setText(R.id.forum_item_user_time, String.valueOf(DateUtils.getRelativeTimeSpanString(Long.valueOf(threadBean.getLastTimeInt()) * 1000L)));

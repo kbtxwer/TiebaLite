@@ -27,7 +27,7 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
     lateinit var refreshLayout: SwipeRefreshLayout
     @BindView(R.id.fragment_search_recycler_view)
     lateinit var recyclerView: RecyclerView
-    private var mAdapter: SearchThreadAdapter? = null
+    private lateinit var mAdapter: SearchThreadAdapter
     private var order: SearchThreadOrder = SearchThreadOrder.NEW
     private var filter: SearchThreadFilter = SearchThreadFilter.ONLY_THREAD
     private var mData: SearchThreadBean.DataBean? = null
@@ -38,7 +38,7 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
             refresh()
         } else {
             mData = null
-            mAdapter!!.reset()
+            mAdapter.reset()
         }
     }
 
@@ -81,19 +81,16 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
     }
 
     private fun hasMore(): Boolean {
-        if (mData == null) {
-            return false
+        return mData?.hasMore.let {
+            if (it == 0) mAdapter.loadEnd()
+            it != 0
         }
-        if (mData!!.hasMore == 0) {
-            mAdapter!!.loadEnd()
-        }
-        return mData!!.hasMore != 0
     }
 
     private fun refresh() {
         refreshLayout.isRefreshing = true
         page = 1
-        TiebaApi.getInstance().searchThread(keyword!!, page, order, filter).enqueue(object : Callback<SearchThreadBean> {
+        TiebaApi.getInstance().searchThread(keyword, page, order, filter).enqueue(object : Callback<SearchThreadBean> {
             override fun onFailure(call: Call<SearchThreadBean>, t: Throwable) {
                 refreshLayout.isRefreshing = false
                 Toast.makeText(attachContext, t.message, Toast.LENGTH_SHORT).show()
@@ -102,7 +99,7 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
             override fun onResponse(call: Call<SearchThreadBean>, response: Response<SearchThreadBean>) {
                 val searchThreadBean = response.body()!!
                 mData = searchThreadBean.data
-                mAdapter!!.setNewData(mData!!.postList)
+                mAdapter.setNewData(mData!!.postList)
                 refreshLayout.isRefreshing = false
             }
         })
@@ -113,7 +110,7 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
             if (!isReload) {
                 page += 1
             }
-            TiebaApi.getInstance().searchThread(keyword!!, page, order, filter).enqueue(object : Callback<SearchThreadBean> {
+            TiebaApi.getInstance().searchThread(keyword, page, order, filter).enqueue(object : Callback<SearchThreadBean> {
                 override fun onFailure(call: Call<SearchThreadBean>, t: Throwable) {
                     refreshLayout.isRefreshing = false
                     Toast.makeText(attachContext, t.message, Toast.LENGTH_SHORT).show()
@@ -122,7 +119,7 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
                 override fun onResponse(call: Call<SearchThreadBean>, response: Response<SearchThreadBean>) {
                     val searchThreadBean = response.body()!!
                     mData = searchThreadBean.data
-                    mAdapter!!.setLoadMoreData(mData!!.postList)
+                    mAdapter.setLoadMoreData(mData!!.postList)
                     refreshLayout.isRefreshing = false
                 }
             })

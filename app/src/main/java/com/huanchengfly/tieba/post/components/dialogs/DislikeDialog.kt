@@ -26,7 +26,7 @@ class DislikeDialog(
         private val threadPersonalizedBean: ThreadPersonalizedBean,
         private val fid: String
 ) : AlertDialog(context), View.OnClickListener {
-    private var dislikeAdapter: DislikeAdapter? = null
+    private lateinit var dislikeAdapter: DislikeAdapter
     var onSubmitListener: OnSubmitListener? = null
     private val clickTime: Long = System.currentTimeMillis()
 
@@ -38,7 +38,7 @@ class DislikeDialog(
             layoutManager = GridLayoutManager(context, 2, RecyclerView.VERTICAL, false).apply {
                 spanSizeLookup = object : SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
-                        return if ("7" == dislikeAdapter!!.getItem(position).dislikeId) 2 else 1
+                        return if ("7" == dislikeAdapter.getItem(position).dislikeId) 2 else 1
                     }
                 }
             }
@@ -53,28 +53,22 @@ class DislikeDialog(
         if (v.id == R.id.submit_btn) {
             val selectIds: MutableList<String> = ArrayList()
             val extras: MutableList<String> = ArrayList()
-            threadPersonalizedBean.dislikeResource?.filter {
-                dislikeAdapter!!.selectedIds.contains(it.dislikeId)
-            }?.forEach {
-                it.dislikeId?.let { it1 -> selectIds.add(it1) }
-                it.extra?.let { it1 -> extras.add(it1) }
+            threadPersonalizedBean.dislikeResource.filter {
+                dislikeAdapter.selectedIds.contains(it.dislikeId)
+            }.forEach {
+                it.dislikeId.let(selectIds::add)
+                it.extra.let(extras::add)
             }
             TiebaApi.getInstance().submitDislike(
                     DislikeBean(
-                            threadPersonalizedBean.tid,
-                            selectIds.joinToString(","),
-                            fid,
-                            clickTime,
-                            extras.joinToString(",")
-                    ),
+                            threadPersonalizedBean.tid, selectIds.joinToString(","),
+                            fid, clickTime, extras.joinToString(",")),
                     AccountUtil.getSToken(context)!!
             ).enqueue(object : Callback<CommonResponse> {
                 override fun onFailure(call: Call<CommonResponse>, t: Throwable) {}
                 override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {}
             })
-            if (onSubmitListener != null) {
-                onSubmitListener!!.onSubmit()
-            }
+            onSubmitListener?.onSubmit()
             dismiss()
         }
     }

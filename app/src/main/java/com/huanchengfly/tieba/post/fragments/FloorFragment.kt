@@ -39,7 +39,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
     private var dataBean: SubFloorListBean? = null
     @BindView(R.id.floor_recycler_view)
     lateinit var recyclerView: RecyclerView
-    private var recyclerViewAdapter: RecyclerFloorAdapter? = null
+    private lateinit var recyclerViewAdapter: RecyclerFloorAdapter
     private var tid = ""
     private var pid = ""
     private var spid: String = ""
@@ -60,20 +60,20 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
 
     @OnClick(R.id.floor_reply_bar)
     fun onReplyBarClick(view: View) {
-        if (dataBean == null) {
-            return
+        dataBean ?. let {dataBean ->
+            val floor = dataBean.post.floor.toInt()
+            val pn = floor - floor % 30
+            startActivity(Intent(attachContext, ReplyActivity::class.java).putExtra("data",
+                ReplyInfoBean(
+                    dataBean.thread.id,
+                    dataBean.forum.id,
+                    dataBean.forum.name,
+                    dataBean.anti.tbs,
+                    dataBean.post.id,
+                    dataBean.post.floor,
+                    dataBean.post.author.nameShow,
+                    AccountUtil.getLoginInfo(attachContext)!!.nameShow).setPn(pn.toString()).toString()))
         }
-        val floor = dataBean!!.post!!.floor.toInt()
-        val pn = floor - floor % 30
-        startActivity(Intent(attachContext, ReplyActivity::class.java).putExtra("data",
-                ReplyInfoBean(dataBean!!.thread!!.id,
-                        dataBean!!.forum!!.id,
-                        dataBean!!.forum!!.name,
-                        dataBean!!.anti!!.tbs,
-                        dataBean!!.post!!.id,
-                        dataBean!!.post!!.floor,
-                        dataBean!!.post!!.author.nameShow,
-                        AccountUtil.getLoginInfo(attachContext)!!.nameShow).setPn(pn.toString()).toString()))
     }
 
     override fun onStart() {
@@ -124,7 +124,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
             layoutManager = mLayoutManager
             adapter = recyclerViewAdapter
         }
-        if (tid.isNotEmpty() && (pid.isNotEmpty() || !spid.isNullOrEmpty())) {
+        if (tid.isNotEmpty() && (pid.isNotEmpty() || spid.isNotEmpty())) {
             refresh(jump)
         }
     }
@@ -158,18 +158,18 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
                 .enqueue(object : Callback<SubFloorListBean> {
                     override fun onFailure(call: Call<SubFloorListBean>, t: Throwable) {
                         Toast.makeText(attachContext, t.message, Toast.LENGTH_SHORT).show()
-                        recyclerViewAdapter!!.loadFailed()
+                        recyclerViewAdapter.loadFailed()
                     }
 
                     override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
                         val subFloorListBean = response.body() ?: return
                         dataBean = subFloorListBean
 
-                        recyclerViewAdapter!!.setData(subFloorListBean)
-                        if (subFloorListBean.page!!.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
-                            recyclerViewAdapter!!.loadEnd()
+                        recyclerViewAdapter.setData(subFloorListBean)
+                        if (subFloorListBean.page.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
+                            recyclerViewAdapter.loadEnd()
                         }
-                        toolbar.title = attachContext.getString(R.string.title_floor_loaded, subFloorListBean.post!!.floor)
+                        toolbar.title = attachContext.getString(R.string.title_floor_loaded, subFloorListBean.post.floor)
                         if (jump) {
                             mLayoutManager!!.scrollToPositionWithOffset(1, 0)
                         }
@@ -185,15 +185,16 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
                 .floor(tid, pn, pid, spid)
                 .enqueue(object : Callback<SubFloorListBean> {
                     override fun onFailure(call: Call<SubFloorListBean>, t: Throwable) {
-                        recyclerViewAdapter!!.loadFailed()
+                        recyclerViewAdapter.loadFailed()
                     }
 
                     override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
-                        val subFloorListBean = response.body() ?: return
-                        dataBean = subFloorListBean
-                        recyclerViewAdapter!!.addData(subFloorListBean)
-                        if (subFloorListBean.page!!.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
-                            recyclerViewAdapter!!.loadEnd()
+                        response.body() ?. let { subFloorListBean ->
+                            dataBean = subFloorListBean
+                            recyclerViewAdapter.addData(subFloorListBean)
+                            if (subFloorListBean.page.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
+                                recyclerViewAdapter.loadEnd()
+                            }
                         }
                     }
 
@@ -207,12 +208,12 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
         const val PARAM_JUMP = "jump"
         @JvmStatic
         @JvmOverloads
-        fun newInstance(tid: String?, pid: String?, spid: String = "", jump: Boolean = false): FloorFragment {
+        fun newInstance(tid: String, pid: String, spid: String = "", jump: Boolean = false): FloorFragment {
             val fragment = FloorFragment()
             val bundle = Bundle()
             bundle.putString(PARAM_TID, tid)
             bundle.putString(PARAM_PID, pid)
-            bundle.putString(PARAM_SUB_POST_ID, spid ?: "")
+            bundle.putString(PARAM_SUB_POST_ID, spid)
             bundle.putBoolean(PARAM_JUMP, jump)
             fragment.arguments = bundle
             return fragment

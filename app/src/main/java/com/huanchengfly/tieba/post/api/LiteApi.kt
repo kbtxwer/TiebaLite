@@ -60,7 +60,7 @@ class LiteApi private constructor(context: Context) {
                         if (response.isSuccess == true) {
                             apiCallback.onSuccess(response)
                         } else {
-                            response.errorCode?.let { apiCallback.onFailure(it, response.errorMsg) }
+                            response.errorCode.let { apiCallback.onFailure(it, response.errorMsg) }
                         }
                     }
                 })

@@ -66,44 +66,38 @@ class PhotoViewActivity : BaseActivity(), OnChangeBottomBarVisibilityListener, T
         }
         mLoading = true
         val lastBean = photoViewBeans[photoViewBeans.size - 1]
-        getInstance().picPage(
-                forumId!!,
-                forumName!!,
-                threadId!!,
-                seeLz,
-                ImageUtil.getPicId(lastBean.originUrl), photoViewBeans.size.toString(),
-                objType!!,
-                false
+        getInstance().picPage(forumId, forumName, threadId, seeLz,
+            ImageUtil.getPicId(lastBean.originUrl), photoViewBeans.size.toString(),
+            objType, false
         ).enqueue(object : Callback<PicPageBean?> {
             override fun onResponse(call: Call<PicPageBean?>, response: Response<PicPageBean?>) {
                 val data = response.body()!!
                 mLoading = false
-                amount = data.picAmount ?: "${photoViewBeans.size}"
+                amount = data.picAmount.ifEmpty { photoViewBeans.size.toString() }
                 updateCounter(mViewPager.currentItem)
                 val picBeans: MutableList<PicPageBean.PicBean> = ArrayList()
                 val imgInfoBeans: MutableList<ImgInfoBean> = ArrayList()
-                if (data.picList?.isNotEmpty()!!) {
-                    val index = data.picList.last().overAllIndex?.toInt()
-                    if (index != null) {
-                        loadFinished = index >= amount!!.toInt()
-                    }
+                if (data.picList.isNotEmpty()) {
+                    val index = data.picList.last().overAllIndex.toIntOrNull()?:0
+                    loadFinished = index >= amount.toInt()
                     picBeans.addAll(data.picList)
                     picBeans.forEach {
-                        it.img?.original?.let { it1 -> imgInfoBeans.add(it1) }
+                        it.img.original.let { it1 -> imgInfoBeans.add(it1) }
                     }
-                    lastIndex = picBeans.first().overAllIndex?.toInt()!!
-                    for (photoViewBean in photoViewBeans) {
-                        val ind = lastIndex - (photoViewBeans.size - 1 - photoViewBeans.indexOf(photoViewBean))
-                        photoViewBean.index = ind.toString()
+                    lastIndex = picBeans.first().overAllIndex.toIntOrNull() ?: 0
+                    photoViewBeans.forEachIndexed { idx, photoViewBean ->
+                        photoViewBean.index = (lastIndex - (photoViewBeans.size - 1 - idx)).toString()
                     }
+//                    for (photoViewBean in photoViewBeans) {
+//                        val ind = lastIndex - (photoViewBeans.size - 1 - photoViewBeans.indexOf(photoViewBean))
+//                        photoViewBean.index = ind.toString()
+//                    }
                     picBeans.removeAt(0)
                     imgInfoBeans.removeAt(0)
                     val beans = imgInfoBeans.mapIndexed { i, it ->
-                        PhotoViewBean(it.bigCdnSrc,
-                                it.originalSrc,
-                                (it.height ?: "0").toInt() > ScreenInfo.EXACT_SCREEN_HEIGHT,
-                                picBeans[i].overAllIndex,
-                                "2" == it.format)
+                        PhotoViewBean(it.bigCdnSrc, it.originalSrc,
+                            (it.height.toIntOrNull() ?: 0) > ScreenInfo.EXACT_SCREEN_HEIGHT,
+                                picBeans[i].overAllIndex, "2" == it.format)
                     }.toMutableList()
                     mAdapter.insert(beans)
                     photoViewBeans = mAdapter.data
@@ -121,11 +115,11 @@ class PhotoViewActivity : BaseActivity(), OnChangeBottomBarVisibilityListener, T
     }
 
     private fun loadFrs() {
-        forumName = intent.getStringExtra(EXTRA_FORUM_NAME)
-        forumId = intent.getStringExtra(EXTRA_FORUM_ID)
-        threadId = intent.getStringExtra(EXTRA_THREAD_ID)
+        forumName = intent.getStringExtra(EXTRA_FORUM_NAME) ?: ""
+        forumId = intent.getStringExtra(EXTRA_FORUM_ID) ?: ""
+        threadId = intent.getStringExtra(EXTRA_THREAD_ID) ?: ""
         seeLz = intent.getBooleanExtra(EXTRA_SEE_LZ, false)
-        objType = intent.getStringExtra(EXTRA_OBJ_TYPE)
+        objType = intent.getStringExtra(EXTRA_OBJ_TYPE) ?: ""
         loadMore()
     }
 

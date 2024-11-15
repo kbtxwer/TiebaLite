@@ -11,7 +11,7 @@ class SignResultBean : BaseBean() {
     @SerializedName("error_code")
     val errorCode: String = ""
 
-    fun getErrorCode() = Integer.valueOf(errorCode!!)
+    fun getErrorCode() = Integer.valueOf(errorCode)
 
     @SerializedName("error_msg")
     val errorMsg: String = ""

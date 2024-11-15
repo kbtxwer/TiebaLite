@@ -36,8 +36,8 @@ class FloorActivity : BaseActivity() {
     @BindView(R.id.floor_recycler_view)
     lateinit var recyclerView: RecyclerView
     private var dataBean: SubFloorListBean? = null
-    private var recyclerViewAdapter: RecyclerFloorAdapter? = null
-    private var navigationHelper: NavigationHelper? = null
+    private lateinit var recyclerViewAdapter: RecyclerFloorAdapter
+    private lateinit var navigationHelper: NavigationHelper
     private var tid: String = ""
     private var pid: String = ""
     private var spid: String = ""
@@ -90,9 +90,9 @@ class FloorActivity : BaseActivity() {
         when (item.itemId) {
             R.id.menu_to_thread -> {
                 if (dataBean != null) {
-                    navigationHelper!!.navigationByData(NavigationHelper.ACTION_THREAD, mapOf<String, String>(
-                            "tid" to tid!!,
-                            "pid" to pid!!
+                    navigationHelper.navigationByData(NavigationHelper.ACTION_THREAD, mapOf<String, String>(
+                            "tid" to tid,
+                            "pid" to pid
                     ))
                 }
                 return true
@@ -103,19 +103,18 @@ class FloorActivity : BaseActivity() {
 
     private fun initData() {
         val intent = intent
-        tid = intent.getStringExtra("tid")
-        pid = intent.getStringExtra("pid")
-        spid = intent.getStringExtra("spid")
-        if (tid != null && (pid != null || spid != null)) {
-            hasMore = true
-            refresh()
-        }
+        tid = intent.getStringExtra("tid") ?: ""
+        pid = intent.getStringExtra("pid") ?: ""
+        spid = intent.getStringExtra("spid") ?: ""
+        refresh()
     }
 
     private fun initView() {
         setSupportActionBar(toolbar)
-        supportActionBar?.setTitle(R.string.title_floor)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.run {
+            setTitle(R.string.title_floor)
+            setDisplayHomeAsUpEnabled(true)
+        }
         recyclerViewAdapter = RecyclerFloorAdapter(this).apply {
             openAutoLoadMore()
             setLoadingView(R.layout.layout_footer_loading)
@@ -142,43 +141,38 @@ class FloorActivity : BaseActivity() {
 
     @OnClick(R.id.floor_reply_bar)
     fun onReplyBarClick(view: View) {
-        if (dataBean == null) {
-            return
+        dataBean?.run {
+            val floor = post.floor.toInt()
+            val pn = floor - floor % 30
+            startActivity(Intent(this@FloorActivity, ReplyActivity::class.java)
+                .putExtra("data", ReplyInfoBean(
+                    thread.id, forum.id, forum.name, anti.tbs, post.id, post.floor,
+                    post.author.nameShow, AccountUtil.getLoginInfo(this@FloorActivity)!!.nameShow)
+                    .setPn(pn.toString()).toString())
+            )
         }
-        val floor = dataBean!!.post!!.floor.toInt()
-        val pn = floor - floor % 30
-        startActivity(Intent(this, ReplyActivity::class.java)
-                .putExtra("data",
-                        ReplyInfoBean(dataBean!!.thread!!.id,
-                                dataBean!!.forum!!.id,
-                                dataBean!!.forum!!.name,
-                                dataBean!!.anti!!.tbs,
-                                dataBean!!.post!!.id,
-                                dataBean!!.post!!.floor,
-                                dataBean!!.post!!.author.nameShow,
-                                AccountUtil.getLoginInfo(this)!!.nameShow).setPn(pn.toString()).toString()))
     }
 
     private fun refresh() {
         refreshLayout.isRefreshing = true
         TiebaApi.getInstance()
-                .floor(tid!!, pn, pid, spid)
+                .floor(tid, pn, pid, spid)
                 .enqueue(object : Callback<SubFloorListBean> {
                     override fun onFailure(call: Call<SubFloorListBean>, t: Throwable) {
                         Toast.makeText(this@FloorActivity, t.message, Toast.LENGTH_SHORT).show()
-                        recyclerViewAdapter!!.loadFailed()
+                        recyclerViewAdapter.loadFailed()
                         refreshLayout.isRefreshing = false
                     }
 
                     override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
                         val subFloorListBean = response.body() ?: return
                         dataBean = subFloorListBean
-                        recyclerViewAdapter!!.setData(subFloorListBean)
+                        recyclerViewAdapter.setData(subFloorListBean)
                         pid = subFloorListBean.post.id
                         spid = ""
                         hasMore = subFloorListBean.page.currentPage.toInt() < subFloorListBean.page.totalPage.toInt()
                         if (!hasMore) {
-                            recyclerViewAdapter!!.loadEnd()
+                            recyclerViewAdapter.loadEnd()
                         }
                         toolbar.title = getString(R.string.title_floor_loaded, subFloorListBean.post.floor)
                         refreshLayout.isRefreshing = false
@@ -192,18 +186,18 @@ class FloorActivity : BaseActivity() {
                 .floor(tid, pn, pid, spid)
                 .enqueue(object : Callback<SubFloorListBean> {
                     override fun onFailure(call: Call<SubFloorListBean>, t: Throwable) {
-                        recyclerViewAdapter!!.loadFailed()
+                        recyclerViewAdapter.loadFailed()
                     }
 
                     override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
                         val subFloorListBean = response.body() ?: return
                         dataBean = subFloorListBean
-                        recyclerViewAdapter!!.addData(subFloorListBean)
+                        recyclerViewAdapter.addData(subFloorListBean)
                         pid = subFloorListBean.post.id
                         spid = ""
                         hasMore = subFloorListBean.page.currentPage.toInt() < subFloorListBean.page.totalPage.toInt()
                         if (!hasMore) {
-                            recyclerViewAdapter!!.loadEnd()
+                            recyclerViewAdapter.loadEnd()
                         }
                         pn += 1
                     }

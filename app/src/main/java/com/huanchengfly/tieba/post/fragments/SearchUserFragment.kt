@@ -72,13 +72,13 @@ class SearchUserFragment : BaseFragment() {
 
     private fun refresh() {
         mRefreshLayout.isRefreshing = true
-        TiebaApi.getInstance().searchUser(keyword!!).enqueue(object : Callback<SearchUserBean> {
+        TiebaApi.getInstance().searchUser(keyword).enqueue(object : Callback<SearchUserBean> {
             override fun onResponse(call: Call<SearchUserBean>, response: Response<SearchUserBean>) {
                 val searchUserDataBean = response.body()!!.data
                 mData = searchUserDataBean
                 mAdapter!!.setData(searchUserDataBean)
                 mRefreshLayout.isRefreshing = false
-                if (searchUserDataBean?.hasMore == 0) mAdapter!!.loadEnd()
+                if (searchUserDataBean.hasMore == 0) mAdapter!!.loadEnd()
             }
 
             override fun onFailure(call: Call<SearchUserBean>, t: Throwable) {

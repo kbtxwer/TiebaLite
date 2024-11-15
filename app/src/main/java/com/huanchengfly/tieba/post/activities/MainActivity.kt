@@ -367,36 +367,36 @@ open class MainActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         }
         instance!!.newCheckUpdate(object : CommonAPICallback<NewUpdateBean?> {
             override fun onSuccess(data: NewUpdateBean?) {
-                if (data != null) {
-                    if (data.isHasUpdate) {
-                        val cancelable = data.result?.isCancelable
+                data?.run {
+                    if (isHasUpdate) {
+                        val cancelable = result.isCancelable
                         val ignored = SharedPreferencesUtil.get(this@MainActivity, SharedPreferencesUtil.SP_IGNORE_VERSIONS)
-                                .getBoolean(data.result?.versionName + "_" + (data.result?.versionCode), false)
-                        if (ignored && cancelable!!) {
+                            .getBoolean(result.versionName + "_" + (result.versionCode), false)
+                        if (ignored && cancelable) {
                             return
                         }
                         val builder = SpannableStringBuilder()
-                        if (data.result?.versionType == 1) {
+                        if (result.versionType == 1) {
                             val betaTip = getString(R.string.tip_beta_version)
                             builder.append(betaTip, ForegroundColorSpan(getColorCompat(R.color.red)), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                             builder.setSpan(StyleSpan(Typeface.BOLD), 0, betaTip.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
-                        for (content in data.result?.updateContent!!) {
+                        for (content in result.updateContent) {
                             builder.append(content)
                             builder.append("\n")
                         }
                         val dialogBuilder = DialogUtil.build(this@MainActivity)
-                                .setTitle(getString(R.string.title_dialog_update, data.result.versionName))
-                                .setMessage(builder)
-                                .setPositiveButton(R.string.button_go_to_download) { _: DialogInterface?, _: Int -> VersionUtil.showDownloadDialog(this@MainActivity, data.result) }
-                                .setCancelable(cancelable!!)
+                            .setTitle(getString(R.string.title_dialog_update, result.versionName))
+                            .setMessage(builder)
+                            .setPositiveButton(R.string.button_go_to_download) { _: DialogInterface?, _: Int -> VersionUtil.showDownloadDialog(this@MainActivity, result) }
+                            .setCancelable(cancelable)
                         if (cancelable) {
                             dialogBuilder.setNegativeButton(R.string.button_next_time, null)
                             dialogBuilder.setNeutralButton(R.string.button_ignore_this_version) { _: DialogInterface?, _: Int ->
                                 SharedPreferencesUtil.get(this@MainActivity, SharedPreferencesUtil.SP_IGNORE_VERSIONS)
-                                        .edit()
-                                        .putBoolean(data.result.versionName + "_" + data.result.versionCode, true)
-                                        .apply()
+                                    .edit()
+                                    .putBoolean(result.versionName + "_" + result.versionCode, true)
+                                    .apply()
                             }
                         }
                         showDialog(dialogBuilder.create())

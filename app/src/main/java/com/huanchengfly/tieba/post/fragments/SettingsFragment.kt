@@ -160,7 +160,7 @@ class SettingsFragment : PreferencesFragment() {
             override fun onSuccess(data: NewUpdateBean?) {
                 if (data != null) {
                     if (data.isHasUpdate == true) {
-                        aboutPreference!!.summary = attachContext.getString(R.string.tip_new_version, data.result?.versionName)
+                        aboutPreference!!.summary = attachContext.getString(R.string.tip_new_version, data.result.versionName)
                     }
                 }
             }

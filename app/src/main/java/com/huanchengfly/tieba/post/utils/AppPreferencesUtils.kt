@@ -73,7 +73,7 @@ open class AppPreferencesUtils(context: Context) {
                 key: String = ""
         ) = object : ReadWriteProperty<AppPreferencesUtils, Int> {
             override fun getValue(thisRef: AppPreferencesUtils, property: KProperty<*>): Int {
-                return thisRef.preferences.getInt(key ?: property.name, defaultValue)
+                return thisRef.preferences.getInt(key.ifEmpty { property.name }, defaultValue)
             }
 
             override fun setValue(
@@ -81,7 +81,7 @@ open class AppPreferencesUtils(context: Context) {
                     property: KProperty<*>,
                     value: Int
             ) {
-                thisRef.preferences.edit().putInt(key ?: property.name, value).apply()
+                thisRef.preferences.edit().putInt(key.ifEmpty { property.name }, value).apply()
             }
         }
 
@@ -112,7 +112,7 @@ open class AppPreferencesUtils(context: Context) {
                             thisRef: AppPreferencesUtils,
                             property: KProperty<*>
                     ): Boolean {
-                        return thisRef.preferences.getBoolean(key ?: property.name, defaultValue)
+                        return thisRef.preferences.getBoolean(key.ifEmpty{property.name}, defaultValue)
                     }
 
                     override fun setValue(
@@ -120,7 +120,7 @@ open class AppPreferencesUtils(context: Context) {
                             property: KProperty<*>,
                             value: Boolean
                     ) {
-                        thisRef.preferences.edit().putBoolean(key ?: property.name, value).apply()
+                        thisRef.preferences.edit().putBoolean(key.ifEmpty{property.name}, value).apply()
                     }
                 }
 
@@ -151,7 +151,7 @@ open class AppPreferencesUtils(context: Context) {
                             thisRef: AppPreferencesUtils,
                             property: KProperty<*>
                     ): String? {
-                        return thisRef.preferences.getString(key ?: property.name, defaultValue)
+                        return thisRef.preferences.getString(key.ifEmpty{property.name}, defaultValue)
                     }
 
                     override fun setValue(
@@ -159,7 +159,7 @@ open class AppPreferencesUtils(context: Context) {
                             property: KProperty<*>,
                             value: String?
                     ) {
-                        thisRef.preferences.edit().putString(key ?: property.name, value).apply()
+                        thisRef.preferences.edit().putString(key.ifEmpty{property.name}, value).apply()
                     }
                 }
 

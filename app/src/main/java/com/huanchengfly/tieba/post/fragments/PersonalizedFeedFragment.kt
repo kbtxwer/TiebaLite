@@ -32,7 +32,7 @@ import retrofit2.Response
 import java.util.*
 
 class PersonalizedFeedFragment : BaseFragment(), PersonalizedFeedAdapter.OnRefreshListener, Refreshable {
-    private var adapter: PersonalizedFeedAdapter? = null
+    private lateinit var adapter: PersonalizedFeedAdapter
     private var personalizedBean: PersonalizedBean? = null
     private var page = 1
 
@@ -123,8 +123,8 @@ class PersonalizedFeedFragment : BaseFragment(), PersonalizedFeedAdapter.OnRefre
                             BlockUtil.needBlock(it.abstractBeans[0].text)) ||
                             BlockUtil.needBlock(it.author.nameShow, it.author.id)
                 }
-                val threadBeans: MutableList<PersonalizedBean.ThreadBean> = ArrayList(adapter!!.allData)
-                adapter!!.apply {
+                val threadBeans: MutableList<PersonalizedBean.ThreadBean> = ArrayList(adapter.allData)
+                adapter.apply {
                     setData(personalizedBean)
                     if (dataCount > 0) {
                         refreshPosition = newThreadBeans.size - 1
@@ -158,23 +158,25 @@ class PersonalizedFeedFragment : BaseFragment(), PersonalizedFeedAdapter.OnRefre
         TiebaApi.getInstance().personalized(2, page).enqueue(object : Callback<PersonalizedBean> {
             override fun onFailure(call: Call<PersonalizedBean>, t: Throwable) {
                 swipeRefreshLayout.isRefreshing = false
-                adapter!!.loadFailed()
+                adapter.loadFailed()
             }
 
             override fun onResponse(call: Call<PersonalizedBean>, response: Response<PersonalizedBean>) {
-                val personalizedBean = response.body()!!
-                this@PersonalizedFeedFragment.personalizedBean = personalizedBean
-                personalizedBean.threadList?.forEachIndexed { index, threadBean ->
-                    threadBean.threadPersonalizedBean = personalizedBean.threadPersonalized?.get(index)
+                response.body() ?. run {
+                    personalizedBean = this
+                    threadList.forEachIndexed { index, threadBean ->
+                        threadBean.threadPersonalizedBean = threadPersonalized[index]
+                    }
+                    val newThreadBeans: List<PersonalizedBean.ThreadBean> = threadList.filterNot {
+                        (it.abstractBeans.isNotEmpty() && BlockUtil.needBlock(it.abstractBeans[0].text)) ||
+                                BlockUtil.needBlock(it.author.nameShow, it.author.id)
+                    }
+                    adapter.apply {
+                        setData(this@run)
+                        setLoadMoreData(newThreadBeans)
+                    }
+                    swipeRefreshLayout.isRefreshing = false
                 }
-                val newThreadBeans: List<PersonalizedBean.ThreadBean> = personalizedBean.threadList?.filterNot {
-                    (it.abstractBeans?.size!! > 0 && BlockUtil.needBlock(it.abstractBeans[0].text)) || BlockUtil.needBlock(it.author?.nameShow, it.author?.id)
-                }!!
-                adapter!!.apply {
-                    setData(personalizedBean)
-                    setLoadMoreData(newThreadBeans)
-                }
-                swipeRefreshLayout.isRefreshing = false
             }
         })
     }

@@ -162,18 +162,19 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
         if (!isReload) {
             page += 1
         }
-        TiebaApi.getInstance().forumPage(forumName!!, page, sortType, classifyId).enqueue(object : Callback<ForumPageBean> {
+        TiebaApi.getInstance().forumPage(forumName, page, sortType, classifyId).enqueue(object : Callback<ForumPageBean> {
             override fun onFailure(call: Call<ForumPageBean>, t: Throwable) {
                 mAdapter.loadFailed()
             }
 
             override fun onResponse(call: Call<ForumPageBean>, response: Response<ForumPageBean>) {
-                val forumPageBean = response.body()!!
-                mDataBean = forumPageBean
-                pageSize = forumPageBean.page?.pageSize?.toInt()!!
-                mAdapter.addData(forumPageBean)
-                if (mDataBean!!.page?.hasMore == "0") {
-                    mAdapter.loadEnd()
+                response.body()?.run {
+                    mDataBean = this
+                    pageSize = page.pageSize.toIntOrNull() ?: 0
+                    mAdapter.addData(this)
+                    if (page.hasMore == "0") {
+                        mAdapter.loadEnd()
+                    }
                 }
             }
         })
@@ -184,7 +185,7 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
         mAdapter.reset()
         mRefreshLayout.isRefreshing = true
         page = 1
-        TiebaApi.getInstance().forumPage(forumName!!, page, sortType, classifyId).enqueue(object : Callback<ForumPageBean> {
+        TiebaApi.getInstance().forumPage(forumName, page, sortType, classifyId).enqueue(object : Callback<ForumPageBean> {
             override fun onFailure(call: Call<ForumPageBean>, t: Throwable) {
                 var errorCode = -1
                 if (t is TiebaException) {
@@ -203,17 +204,16 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
             }
 
             override fun onResponse(call: Call<ForumPageBean>, response: Response<ForumPageBean>) {
-                val forumPageBean = response.body()!!
-                mAdapter.reset()
-                mAdapter.setData(forumPageBean)
-                if (attachContext is OnRefreshedListener) {
-                    (attachContext as OnRefreshedListener).onSuccess(forumPageBean)
-                }
-                mRefreshLayout.isRefreshing = false
-                mDataBean = forumPageBean
-                pageSize = forumPageBean.page?.pageSize?.toInt()!!
-                if (mDataBean!!.page?.hasMore == "0") {
-                    mAdapter.loadEnd()
+                response.body() ?.let {
+                    mAdapter.reset()
+                    mAdapter.setData(it)
+                    (attachContext as OnRefreshedListener?)?.onSuccess(it)
+                    mRefreshLayout.isRefreshing = false
+                    mDataBean = it
+                    pageSize = it.page.pageSize.toIntOrNull() ?: 0
+                    if (it.page.hasMore == "0") {
+                        mAdapter.loadEnd()
+                    }
                 }
             }
         })
@@ -224,8 +224,9 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
     }
 
     override fun onSwitch(which: Int) {
-        if (isGood && mDataBean != null) {
-            classifyId = mDataBean!!.forum?.goodClassify?.get(which)?.classId!!
+        if (!isGood) return
+        mDataBean?.let {
+            classifyId = it.forum.goodClassify[which].classId
             refresh()
         }
     }
@@ -241,20 +242,16 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
 
     internal inner class DataHolder : DataListener<ForumPageBean?> {
         override fun onDataArrived(forumPageBean: ForumPageBean?) {
-            if (forumPageBean == null) {
-                refresh()
-                return
-            }
-            if (attachContext is OnRefreshedListener) {
-                (attachContext as OnRefreshedListener).onSuccess(forumPageBean)
-            }
-            mRefreshLayout.isRefreshing = false
-            mDataBean = forumPageBean
-            pageSize = forumPageBean.page?.pageSize?.toInt()!!
-            mAdapter.setData(forumPageBean)
-            if ("1" != mDataBean!!.page?.hasMore) {
-                mAdapter.loadEnd()
-            }
+            forumPageBean?.let {
+                (attachContext as OnRefreshedListener?)?.onSuccess(it)
+                mRefreshLayout.isRefreshing = false
+                mDataBean = it
+                pageSize = it.page.pageSize.toIntOrNull() ?: 0
+                mAdapter.setData(it)
+                if ("1" != it.page.hasMore) {
+                    mAdapter.loadEnd()
+                }
+            }?:refresh()
         }
     }
 
@@ -266,7 +263,7 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
         const val PARAM_PRELOAD_ID = "preload_id"
         const val DEFAULT_CLASSIFY_ID = "0"
         private const val DEFAULT_PAGE_SIZE = 30
-        fun newInstance(forumName: String?, isGood: Boolean, sortType: ForumSortType): ForumFragment {
+        fun newInstance(forumName: String, isGood: Boolean, sortType: ForumSortType): ForumFragment {
             val args = Bundle()
             args.putString(PARAM_FORUM_NAME, forumName)
             args.putBoolean(PARAM_IS_GOOD, isGood)
@@ -277,7 +274,7 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
             return fragment
         }
 
-        fun newInstance(forumName: String?, isGood: Boolean, sortType: ForumSortType, preloadId: Int): ForumFragment {
+        fun newInstance(forumName: String, isGood: Boolean, sortType: ForumSortType, preloadId: Int): ForumFragment {
             val args = Bundle()
             args.putString(PARAM_FORUM_NAME, forumName)
             args.putBoolean(PARAM_IS_GOOD, isGood)

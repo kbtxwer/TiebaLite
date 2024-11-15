@@ -23,30 +23,28 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class NotifyJobService : JobService() {
-    var notificationManager: NotificationManager? = null
+    private lateinit var notificationManager: NotificationManager
     private fun createChannel(id: String, name: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(id,
                     name, NotificationManager.IMPORTANCE_DEFAULT)
             channel.group = CHANNEL_GROUP
             channel.setShowBadge(true)
-            notificationManager!!.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
     override fun onStartJob(params: JobParameters): Boolean {
         Log.i(TAG, "onStartJob")
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (notificationManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channelGroup = NotificationChannelGroup(CHANNEL_GROUP, CHANNEL_GROUP_NAME)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    channelGroup.description = "贴吧的各种消息通知"
-                }
-                notificationManager!!.createNotificationChannelGroup(channelGroup)
-                createChannel(CHANNEL_REPLY, CHANNEL_REPLY_NAME)
-                createChannel(CHANNEL_AT, CHANNEL_AT_NAME)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelGroup = NotificationChannelGroup(CHANNEL_GROUP, CHANNEL_GROUP_NAME)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                channelGroup.description = "贴吧的各种消息通知"
             }
+            notificationManager.createNotificationChannelGroup(channelGroup)
+            createChannel(CHANNEL_REPLY, CHANNEL_REPLY_NAME)
+            createChannel(CHANNEL_AT, CHANNEL_AT_NAME)
         }
         TiebaApi.getInstance().msg().enqueue(object : Callback<MsgBean> {
             override fun onFailure(call: Call<MsgBean>, t: Throwable) {
@@ -55,35 +53,28 @@ class NotifyJobService : JobService() {
 
             override fun onResponse(call: Call<MsgBean>, response: Response<MsgBean>) {
                 val msgBean = response.body() ?: return
-                if (notificationManager != null) {
-                    var total = 0
-                    if ("0" != msgBean.message?.replyMe) {
-                        val replyCount = msgBean.message?.replyMe?.let { Integer.valueOf(it) }
-                        if (replyCount != null) {
-                            total += replyCount
-                        }
-                        sendBroadcast(Intent()
-                                .setAction(ACTION_NEW_MESSAGE)
-                                .putExtra("channel", CHANNEL_REPLY)
-                                .putExtra("count", replyCount))
-                        updateNotification(getString(R.string.tips_message_reply, msgBean.message?.replyMe), ID_REPLY, CHANNEL_REPLY, CHANNEL_REPLY_NAME, MessageActivity.createIntent(this@NotifyJobService, MessageFragment.TYPE_REPLY_ME))
-                    }
-                    if ("0" != msgBean.message?.atMe) {
-                        val atCount = msgBean.message?.atMe?.let { Integer.valueOf(it) }
-                        if (atCount != null) {
-                            total += atCount
-                        }
-                        sendBroadcast(Intent()
-                                .setAction(ACTION_NEW_MESSAGE)
-                                .putExtra("channel", CHANNEL_AT)
-                                .putExtra("count", msgBean.message?.atMe))
-                        updateNotification(getString(R.string.tips_message_at, msgBean.message?.atMe), ID_AT, CHANNEL_AT, CHANNEL_AT_NAME, MessageActivity.createIntent(this@NotifyJobService, MessageFragment.TYPE_AT_ME))
-                    }
+                var total = 0
+                msgBean.message.replyMe.toIntOrNull()?.let { replyCount ->
+                    if (replyCount <= 0) return@let
+                    total += replyCount
                     sendBroadcast(Intent()
                             .setAction(ACTION_NEW_MESSAGE)
-                            .putExtra("channel", CHANNEL_TOTAL)
-                            .putExtra("count", total))
+                            .putExtra("channel", CHANNEL_REPLY)
+                            .putExtra("count", replyCount))
+                    updateNotification(getString(R.string.tips_message_reply, msgBean.message.replyMe), ID_REPLY, CHANNEL_REPLY, CHANNEL_REPLY_NAME, MessageActivity.createIntent(this@NotifyJobService, MessageFragment.TYPE_REPLY_ME))
                 }
+                msgBean.message.atMe.toIntOrNull()?.let {atCount ->
+                    if (atCount <= 0) return@let
+                    total += atCount
+                    sendBroadcast(Intent()
+                            .setAction(ACTION_NEW_MESSAGE)
+                            .putExtra("channel", CHANNEL_AT)
+                            .putExtra("count", msgBean.message.atMe))
+                    updateNotification(getString(R.string.tips_message_at, msgBean.message.atMe), ID_AT, CHANNEL_AT, CHANNEL_AT_NAME, MessageActivity.createIntent(this@NotifyJobService, MessageFragment.TYPE_AT_ME))
+                }
+                if (total > 0) sendBroadcast(Intent().setAction(ACTION_NEW_MESSAGE)
+                    .putExtra("channel", CHANNEL_TOTAL)
+                    .putExtra("count", total))
                 jobFinished(params, false)
             }
         })
@@ -107,7 +98,7 @@ class NotifyJobService : JobService() {
                 .setContentIntent(PendingIntent.getActivity(this, 0, intent, Intent.FLAG_ACTIVITY_NEW_TASK))
                 .setColor(ThemeUtils.getColorByAttr(this, R.attr.colorPrimary))
                 .build()
-        notificationManager!!.notify(id, notification)
+        notificationManager.notify(id, notification)
     }
 
     companion object {

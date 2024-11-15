@@ -27,11 +27,11 @@ class StParamInterceptor(private val method: Boolean = false) : Interceptor {
 
         val num = ThreadLocalRandom.current().nextInt(100, 850)
         var stErrorNums = "0"
-        var stMethod: String? = null
-        var stMode: String? = null
-        var stTimesNum: String? = null
-        var stTime: String? = null
-        var stSize: String? = null
+        var stMethod: String = ""
+        var stMode: String = ""
+        var stTimesNum: String = ""
+        var stTime: String = ""
+        var stSize: String = ""
         if (num !in 100..120) {
             stErrorNums = "1"
             stMethod = if (method) "2" else "1"

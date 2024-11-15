@@ -35,10 +35,13 @@ object MixedTiebaApiImpl : ITiebaApi {
                           postId: String): Call<AgreeBean> = RetrofitTiebaApi.MINI_TIEBA_API.disagree(postId, threadId)
 
     override fun forumRecommend(): Call<ForumRecommend> = RetrofitTiebaApi.MINI_TIEBA_API.forumRecommend()
-
     override fun forumPage(
-            forumName: String, page: Int, sortType: ForumSortType, goodClassifyId: String?
-    ): Call<ForumPageBean> = RetrofitTiebaApi.MINI_TIEBA_API.forumPage(forumName, page, sortType.value, goodClassifyId)
+        forumName: String,
+        page: Int,
+        sortType: ForumSortType,
+        goodClassifyId: String
+    ): Call<ForumPageBean> =
+        RetrofitTiebaApi.MINI_TIEBA_API.forumPage(forumName, page, sortType.value, goodClassifyId)
 
     override fun floor(
             threadId: String, page: Int, postId: String?, subPostId: String?
@@ -159,7 +162,7 @@ object MixedTiebaApiImpl : ITiebaApi {
             RetrofitTiebaApi.WEB_TIEBA_API.searchThread(keyword, page, order.toString(), filter.toString())
 
     override fun webUploadPic(photoInfoBean: PhotoInfoBean): Call<WebUploadPicBean> {
-        var base64: String? = null
+        var base64 = ""
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             base64 = ImageUtil.imageToBase64(photoInfoBean.file)
         } else {
@@ -169,7 +172,6 @@ object MixedTiebaApiImpl : ITiebaApi {
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
-                base64 = null
             }
         }
         return RetrofitTiebaApi.WEB_TIEBA_API.webUploadPic(base64)
@@ -226,7 +228,7 @@ object MixedTiebaApiImpl : ITiebaApi {
             )
 
     override fun webForumPage(
-            forumName: String, page: Int, goodClassifyId: String?, sortType: ForumSortType, pageSize: Int
+            forumName: String, page: Int, goodClassifyId: String, sortType: ForumSortType, pageSize: Int
     ): Call<ForumBean> =
             RetrofitTiebaApi.WEB_TIEBA_API.frs(forumName, (page - 1) * pageSize, sortType.value, goodClassifyId)
 }

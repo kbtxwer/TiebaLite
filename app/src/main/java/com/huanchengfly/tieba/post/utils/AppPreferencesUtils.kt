@@ -70,7 +70,7 @@ open class AppPreferencesUtils(context: Context) {
     private object SharedPreferenceDelegates {
         fun int(
                 defaultValue: Int = 0,
-                key: String? = null
+                key: String = ""
         ) = object : ReadWriteProperty<AppPreferencesUtils, Int> {
             override fun getValue(thisRef: AppPreferencesUtils, property: KProperty<*>): Int {
                 return thisRef.preferences.getInt(key ?: property.name, defaultValue)
@@ -105,7 +105,7 @@ open class AppPreferencesUtils(context: Context) {
 
         fun boolean(
                 defaultValue: Boolean = false,
-                key: String? = null
+                key: String = ""
         ) =
                 object : ReadWriteProperty<AppPreferencesUtils, Boolean> {
                     override fun getValue(
@@ -143,8 +143,8 @@ open class AppPreferencesUtils(context: Context) {
                 }
 
         fun string(
-                defaultValue: String? = null,
-                key: String? = null
+                defaultValue: String = "",
+                key: String = ""
         ) =
                 object : ReadWriteProperty<AppPreferencesUtils, String?> {
                     override fun getValue(

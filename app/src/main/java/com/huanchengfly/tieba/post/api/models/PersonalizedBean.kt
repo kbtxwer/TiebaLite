@@ -8,100 +8,100 @@ import com.huanchengfly.tieba.post.api.models.ForumPageBean.*
 
 class PersonalizedBean {
     @SerializedName("error_code")
-    val errorCode: String? = null
+    val errorCode: String = ""
 
     @SerializedName("error_msg")
-    val errorMsg: String? = null
+    val errorMsg: String = ""
 
     @SerializedName("thread_list")
-    val threadList: List<ThreadBean>? = null
+    val threadList: List<ThreadBean> = mutableListOf()
 
     @SerializedName("thread_personalized")
-    val threadPersonalized: List<ThreadPersonalizedBean>? = null
+    val threadPersonalized: List<ThreadPersonalizedBean> = mutableListOf()
 
     class ThreadPersonalizedBean {
-        val tid: String? = null
+        val tid: String = ""
 
         @SerializedName("dislike_resource")
-        val dislikeResource: List<DislikeResourceBean>? = null
+        val dislikeResource: List<DislikeResourceBean> = mutableListOf()
 
     }
 
     class DislikeResourceBean {
-        val extra: String? = null
+        val extra: String = ""
 
         @SerializedName("dislike_id")
-        val dislikeId: String? = null
+        val dislikeId: String = ""
 
         @SerializedName("dislike_reason")
-        val dislikeReason: String? = null
+        val dislikeReason: String = ""
 
     }
 
     class ThreadBean {
-        val id: String? = null
-        val tid: String? = null
-        val title: String? = null
-        val author: AuthorBean? = null
+        val id: String = ""
+        val tid: String = ""
+        val title: String = ""
+        val author: AuthorBean = AuthorBean()
 
         @SerializedName("reply_num")
-        val replyNum: String? = null
+        val replyNum: String = ""
 
         @SerializedName("view_num")
-        val viewNum: String? = null
+        val viewNum: String = ""
 
         @SerializedName("last_time")
-        val lastTime: String? = null
+        val lastTime: String = ""
 
         @SerializedName("last_time_int")
-        val lastTimeInt: String? = null
+        val lastTimeInt: String = ""
 
         @SerializedName("agree_num")
-        val agreeNum: String? = null
+        val agreeNum: String = ""
 
         @SerializedName("is_top")
-        val isTop: String? = null
+        val isTop: String = ""
 
         @SerializedName("is_good")
-        val isGood: String? = null
+        val isGood: String = ""
 
         @SerializedName("is_ntitle")
-        val isNoTitle: String? = null
+        val isNoTitle: String = ""
 
         @SerializedName("fid")
-        val forumId: String? = null
+        val forumId: String = ""
 
         @SerializedName("fname")
-        val forumName: String? = null
+        val forumName: String = ""
 
         @SerializedName("video_info")
-        val videoInfo: VideoInfoBean? = null
+        val videoInfo: VideoInfoBean = VideoInfoBean()
 
         @JsonAdapter(MediaAdapter::class)
-        val media: List<MediaInfoBean>? = null
+        val media: List<MediaInfoBean> = mutableListOf()
 
         @SerializedName("abstract")
-        val abstractBeans: List<AbstractBean>? = null
-        var threadPersonalizedBean: ThreadPersonalizedBean? = null
+        val abstractBeans: List<AbstractBean> = mutableListOf()
+        var threadPersonalizedBean: ThreadPersonalizedBean = ThreadPersonalizedBean()
 
     }
 
     class AuthorBean {
-        val id: String? = null
-        val name: String? = null
+        val id: String = ""
+        val name: String = ""
 
         @SerializedName("name_show")
-        val nameShow: String? = null
+        val nameShow: String = ""
 
         @JsonAdapter(PortraitAdapter::class)
-        val portrait: String? = null
+        val portrait: String = ""
 
         @SerializedName("has_concerned")
-        val hasConcerned: String? = null
+        val hasConcerned: String = ""
 
     }
 
     class MediaNumBean {
-        val pic: String? = null
+        val pic: String = ""
     }
 }

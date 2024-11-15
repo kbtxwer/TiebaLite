@@ -4,48 +4,48 @@ import com.google.gson.annotations.SerializedName
 
 class SearchThreadBean {
     @SerializedName("no")
-    val errorCode: Int? = null
+    val errorCode: Int = 0
 
     @SerializedName("error")
-    val errorMsg: String? = null
-    val data: DataBean? = null
+    val errorMsg: String = ""
+    val data: DataBean = DataBean()
 
     inner class DataBean {
         @SerializedName("has_more")
-        val hasMore: Int? = null
+        val hasMore: Int = 0
 
         @SerializedName("current_page")
-        val currentPage: Int? = null
+        val currentPage: Int = 0
 
         @SerializedName("post_list")
-        val postList: List<ThreadInfoBean>? = null
+        val postList: List<ThreadInfoBean> = mutableListOf()
 
     }
 
     inner class ThreadInfoBean {
-        val tid: String? = null
-        val pid: String? = null
-        val title: String? = null
-        val content: String? = null
-        val time: String? = null
+        val tid: String = ""
+        val pid: String = ""
+        val title: String = ""
+        val content: String = ""
+        val time: String = ""
 
         @SerializedName("post_num")
-        val postNum: String? = null
+        val postNum: String = ""
 
         @SerializedName("forum_name")
-        val forumName: String? = null
-        val user: UserInfoBean? = null
-        val type: Int? = null
+        val forumName: String = ""
+        val user: UserInfoBean = UserInfoBean()
+        val type: Int = 0
 
     }
 
     inner class UserInfoBean {
         @SerializedName("user_name")
-        val userName: String? = null
+        val userName: String = ""
 
         @SerializedName("user_id")
-        val userId: String? = null
-        val portrait: String? = null
+        val userId: String = ""
+        val portrait: String = ""
 
     }
 }

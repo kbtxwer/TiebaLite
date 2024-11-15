@@ -7,95 +7,95 @@ import com.huanchengfly.tieba.post.models.BaseBean
 
 class MessageListBean : BaseBean() {
     @SerializedName("error_code")
-    val errorCode: String? = null
+    val errorCode: String = "-1"
     val time: Long = 0
 
     @SerializedName("reply_list")
-    val replyList: List<MessageInfoBean>? = null
+    val replyList: List<MessageInfoBean> = mutableListOf()
 
     @SerializedName("at_list")
-    val atList: List<MessageInfoBean>? = null
-    val page: PageInfoBean? = null
-    val message: MessageBean? = null
+    val atList: List<MessageInfoBean> = mutableListOf()
+    val page: PageInfoBean = PageInfoBean()
+    val message: MessageBean = MessageBean()
 
-    fun getErrorCode() = Integer.valueOf(errorCode!!)
+    fun getErrorCode() = Integer.valueOf(errorCode)
 
     open inner class UserInfoBean {
-        val id: String? = null
-        val name: String? = null
+        val id: String = ""
+        val name: String = ""
 
         @SerializedName("name_show")
-        val nameShow: String? = null
+        val nameShow: String = ""
 
         @JsonAdapter(PortraitAdapter::class)
-        val portrait: String? = null
+        val portrait: String = ""
 
     }
 
     inner class ReplyerInfoBean : UserInfoBean() {
         @SerializedName("is_friend")
-        val isFriend: String? = null
+        val isFriend: String = ""
 
         @SerializedName("is_fans")
-        val isFans: String? = null
+        val isFans: String = ""
 
     }
 
     inner class MessageInfoBean {
         @SerializedName("is_floor")
-        val isFloor: String? = null
-        val title: String? = null
-        val content: String? = null
+        val isFloor: String = ""
+        val title: String = ""
+        val content: String = ""
 
         @SerializedName("quote_content")
-        val quoteContent: String? = null
-        val replyer: ReplyerInfoBean? = null
+        val quoteContent: String = ""
+        val replyer: ReplyerInfoBean = ReplyerInfoBean()
 
         @SerializedName("quote_user")
-        val quoteUser: UserInfoBean? = null
+        val quoteUser: UserInfoBean = UserInfoBean()
 
         @SerializedName("thread_id")
-        val threadId: String? = null
+        val threadId: String = ""
 
         @SerializedName("post_id")
-        val postId: String? = null
-        val time: String? = null
+        val postId: String = ""
+        val time: String = ""
 
         @SerializedName("fname")
-        val forumName: String? = null
+        val forumName: String = ""
 
         @SerializedName("quote_pid")
-        val quotePid: String? = null
+        val quotePid: String = ""
 
         @SerializedName("thread_type")
-        val threadType: String? = null
-        val unread: String? = null
+        val threadType: String = ""
+        val unread: String = ""
 
     }
 
     inner class MessageBean {
         @SerializedName("replyme")
-        val replyMe: String? = null
+        val replyMe: String = ""
 
         @SerializedName("atme")
-        val atMe: String? = null
-        val fans: String? = null
-        val recycle: String? = null
+        val atMe: String = ""
+        val fans: String = ""
+        val recycle: String = ""
 
         @SerializedName("storethread")
-        val storeThread: String? = null
+        val storeThread: String = ""
 
     }
 
     inner class PageInfoBean {
         @SerializedName("current_page")
-        val currentPage: String? = null
+        val currentPage: String = ""
 
         @SerializedName("has_more")
-        val hasMore: String? = null
+        val hasMore: String = ""
 
         @SerializedName("has_prev")
-        val hasPrev: String? = null
+        val hasPrev: String = ""
 
     }
 }

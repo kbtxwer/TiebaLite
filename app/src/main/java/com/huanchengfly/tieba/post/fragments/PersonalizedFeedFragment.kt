@@ -115,12 +115,14 @@ class PersonalizedFeedFragment : BaseFragment(), PersonalizedFeedAdapter.OnRefre
             override fun onResponse(call: Call<PersonalizedBean>, response: Response<PersonalizedBean>) {
                 val personalizedBean = response.body()!!
                 this@PersonalizedFeedFragment.personalizedBean = personalizedBean
-                personalizedBean.threadList?.forEachIndexed { index, threadBean ->
-                    threadBean.threadPersonalizedBean = personalizedBean.threadPersonalized?.get(index)
+                personalizedBean.threadList.forEachIndexed { index, threadBean ->
+                    threadBean.threadPersonalizedBean = personalizedBean.threadPersonalized[index]
                 }
-                val newThreadBeans: List<PersonalizedBean.ThreadBean> = personalizedBean.threadList?.filterNot {
-                    (it.abstractBeans?.size!! > 0 && BlockUtil.needBlock(it.abstractBeans[0].text)) || BlockUtil.needBlock(it.author?.nameShow, it.author?.id)
-                }!!
+                val newThreadBeans: List<PersonalizedBean.ThreadBean> = personalizedBean.threadList.filterNot {
+                    (it.abstractBeans.isNotEmpty() &&
+                            BlockUtil.needBlock(it.abstractBeans[0].text)) ||
+                            BlockUtil.needBlock(it.author.nameShow, it.author.id)
+                }
                 val threadBeans: MutableList<PersonalizedBean.ThreadBean> = ArrayList(adapter!!.allData)
                 adapter!!.apply {
                     setData(personalizedBean)

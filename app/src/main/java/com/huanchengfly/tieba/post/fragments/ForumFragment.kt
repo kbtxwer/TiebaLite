@@ -38,7 +38,7 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
     private var preloadId = 0
     private var isGood = false
     private var classifyId = ""
-    private var forumName: String? = null
+    private var forumName: String = ""
     private var mDataBean: ForumPageBean? = null
 
     lateinit var mAdapter: ForumAdapter
@@ -70,7 +70,7 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
-            forumName = savedInstanceState.getString(PARAM_FORUM_NAME)
+            forumName = savedInstanceState.getString(PARAM_FORUM_NAME) ?: ""
             isGood = savedInstanceState.getBoolean(PARAM_IS_GOOD)
             sortType = valueOf(savedInstanceState.getInt(PARAM_SORT_TYPE))
             preload = false
@@ -94,7 +94,7 @@ class ForumFragment : BaseFragment(), Refreshable, OnSwitchListener, ScrollTopab
         super.onCreate(savedInstanceState)
         val bundle = arguments
         if (savedInstanceState == null && bundle != null) {
-            forumName = bundle.getString(PARAM_FORUM_NAME)
+            forumName = bundle.getString(PARAM_FORUM_NAME) ?: ""
             isGood = bundle.getBoolean(PARAM_IS_GOOD, false)
             sortType = valueOf(bundle.getInt(PARAM_SORT_TYPE))
             preload = bundle.getBoolean(PARAM_PRELOAD)

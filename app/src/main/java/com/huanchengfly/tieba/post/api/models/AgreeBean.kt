@@ -5,17 +5,17 @@ import com.google.gson.annotations.SerializedName
 
 class AgreeBean : BaseBean() {
     @SerializedName("error_code")
-    val errorCode: String? = null
+    val errorCode: String = ""
 
     @SerializedName("error_msg")
-    val errorMsg: String? = null
-    val data: AgreeDataBean? = null
+    val errorMsg: String = ""
+    val data: AgreeDataBean = AgreeDataBean()
 
     class AgreeDataBean {
-        val agree: AgreeInfoBean? = null
+        val agree: AgreeInfoBean = AgreeInfoBean()
     }
 
     class AgreeInfoBean {
-        val score: String? = null
+        val score: String = ""
     }
 }

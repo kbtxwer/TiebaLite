@@ -252,7 +252,7 @@ public class PersonalizedFeedAdapter extends MultiBaseAdapter<PersonalizedBean.T
                 }
                 break;
             case TYPE_THREAD_VIDEO:
-                if (threadBean.getVideoInfo() == null) {
+                if (threadBean.getVideoInfo().getVideoUrl().isEmpty()) {
                     break;
                 }
                 VideoPlayerStandard videoPlayerStandard = viewHolder.getView(R.id.forum_item_content_video);
@@ -284,10 +284,10 @@ public class PersonalizedFeedAdapter extends MultiBaseAdapter<PersonalizedBean.T
 
     @Override
     protected int getViewType(int position, PersonalizedBean.ThreadBean threadBean) {
-        if (threadBean.getVideoInfo() != null) {
+        if (!threadBean.getVideoInfo().getVideoUrl().isEmpty()) {
             return TYPE_THREAD_VIDEO;
         }
-        if (threadBean.getMedia() == null) {
+        if (threadBean.getMedia().isEmpty()) {
             return TYPE_THREAD_COMMON;
         }
         if (threadBean.getMedia().size() == 1) {

@@ -4,55 +4,55 @@ import com.google.gson.annotations.SerializedName
 
 class SearchPostBean {
     @SerializedName("error_code")
-    val errorCode: String? = null
+    val errorCode: String = ""
 
     @SerializedName("error_msg")
-    val errorMsg: String? = null
-    val page: PageBean? = null
+    val errorMsg: String = ""
+    val page: PageBean = PageBean()
 
     @SerializedName("post_list")
-    val postList: List<ThreadInfoBean>? = null
+    val postList: List<ThreadInfoBean> = mutableListOf()
 
     class PageBean {
         @SerializedName("page_size")
-        val pageSize: String? = null
-        val offset: String? = null
+        val pageSize: String = ""
+        val offset: String = ""
 
         @SerializedName("current_page")
-        val currentPage: String? = null
+        val currentPage: String = ""
 
         @SerializedName("total_count")
-        val totalCount: String? = null
+        val totalCount: String = ""
 
         @SerializedName("total_page")
-        val totalPage: String? = null
+        val totalPage: String = ""
 
         @SerializedName("has_more")
-        val hasMore: String? = null
+        val hasMore: String = ""
 
         @SerializedName("has_prev")
-        val hasPrev: String? = null
+        val hasPrev: String = ""
 
     }
 
     class ThreadInfoBean {
-        val tid: String? = null
-        val pid: String? = null
-        val title: String? = null
-        val content: String? = null
-        val time: String? = null
+        val tid: String = ""
+        val pid: String = ""
+        val title: String = ""
+        val content: String = ""
+        val time: String = ""
 
         @SerializedName("fname")
-        val forumName: String? = null
-        val author: AuthorBean? = null
+        val forumName: String = ""
+        val author: AuthorBean = AuthorBean()
 
     }
 
     class AuthorBean {
-        val name: String? = null
+        val name: String = ""
 
         @SerializedName("name_show")
-        val nameShow: String? = null
+        val nameShow: String = ""
 
     }
 }

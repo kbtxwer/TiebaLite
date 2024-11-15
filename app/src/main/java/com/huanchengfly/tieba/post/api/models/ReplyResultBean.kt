@@ -4,25 +4,25 @@ import com.google.gson.annotations.SerializedName
 
 class ReplyResultBean {
     @SerializedName("error_code")
-    var errorCode: String? = null
+    var errorCode: String = ""
 
     @SerializedName("error_msg")
-    var errorMsg: String? = null
-    var info: InfoBean? = null
-    val pid: String? = null
+    var errorMsg: String = ""
+    var info: InfoBean = InfoBean()
+    val pid: String = ""
 
     inner class InfoBean {
         @SerializedName("need_vcode")
-        val needVcode: String? = null
+        val needVcode: String = ""
 
         @SerializedName("vcode_md5")
-        val vcodeMD5: String? = null
+        val vcodeMD5: String = ""
 
         @SerializedName("vcode_pic_url")
-        val vcodePicUrl: String? = null
+        val vcodePicUrl: String = ""
 
         @SerializedName("pass_token")
-        val passToken: String? = null
+        val passToken: String = ""
 
     }
 }

@@ -59,11 +59,11 @@ object TiebaUtil {
 
     @JvmStatic
     @JvmOverloads
-    fun shareText(context: Context, text: String, title: String? = null) {
+    fun shareText(context: Context, text: String, title: String = "") {
         context.startActivity(Intent().apply {
             action = Intent.ACTION_SEND
             type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, "${if (title != null) "「$title」\n" else ""}$text\n（分享自贴吧 Lite）")
+            putExtra(Intent.EXTRA_TEXT, "${"「$title」\n"}$text\n（百度贴吧）")
         })
     }
 }

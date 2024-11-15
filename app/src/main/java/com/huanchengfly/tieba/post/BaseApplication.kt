@@ -45,19 +45,17 @@ class BaseApplication : Application() {
                 .withCaptureUncaughtExceptions(true)
                 .build(this, "ZMRX6W76WNF95ZHT857X")
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-            private var clipBoardHash: String? = null
+            private var clipBoardHash: String = ""
             private fun updateClipBoardHashCode() {
                 clipBoardHash = getClipBoardHash()
             }
 
-            private fun getClipBoardHash(): String? {
+            private fun getClipBoardHash(): String {
                 val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val data = cm.primaryClip
-                if (data != null) {
-                    val item = data.getItemAt(0)
-                    return item.toString().toMD5()
-                }
-                return null
+                return data?.let {
+                    data.getItemAt(0).toString().toMD5()
+                } ?: ""
             }
 
             private val clipBoard: String
@@ -65,9 +63,7 @@ class BaseApplication : Application() {
                     val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                     val data = cm.primaryClip ?: return ""
                     val item = data.getItemAt(0)
-                    return if (item == null || item.text == null) {
-                        ""
-                    } else item.text.toString()
+                    return item?.text?.toString()?:""
                 }
 
             private fun isTiebaDomain(host: String?): Boolean {

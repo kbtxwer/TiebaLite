@@ -10,31 +10,31 @@ class NewUpdateBean {
     val isHasUpdate: Boolean = false
 
     @SerializedName("error_code")
-    val errorCode: Int? = null
+    val errorCode: Int = 0
 
     @SerializedName("error_message")
-    val errorMsg: String? = null
-    val result: ResultBean? = null
+    val errorMsg: String = ""
+    val result: ResultBean = ResultBean()
 
     class ResultBean {
-        val isCancelable: Boolean? = null
+        val isCancelable: Boolean = false
 
         @SerializedName("update_content")
-        val updateContent: List<String>? = null
+        val updateContent: List<String> = mutableListOf()
 
         @SerializedName("version_code")
-        val versionCode: Int? = null
+        val versionCode: Int = 0
 
         @SerializedName("version_name")
-        val versionName: String? = null
+        val versionName: String = ""
 
         @SerializedName("version_type")
-        val versionType: Int? = null
-        val downloads: List<DownloadBean>? = null
+        val versionType: Int = 0
+        val downloads: List<DownloadBean> = mutableListOf()
     }
 
     class DownloadBean {
-        val name: String? = null
-        val url: String? = null
+        val name: String = ""
+        val url: String = ""
     }
 }

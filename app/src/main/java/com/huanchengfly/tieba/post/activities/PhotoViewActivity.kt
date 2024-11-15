@@ -51,11 +51,11 @@ class PhotoViewActivity : BaseActivity(), OnChangeBottomBarVisibilityListener, T
     private var mLoading = false
     private var loadFinished = false
     private val autoHideRunnable = Runnable { onHide() }
-    private var amount: String? = null
-    private var forumName: String? = null
-    private var forumId: String? = null
-    private var threadId: String? = null
-    private var objType: String? = null
+    private var amount: String = ""
+    private var forumName: String = ""
+    private var forumId: String = ""
+    private var threadId: String = ""
+    private var objType: String = ""
 
     private fun loadMore() {
         if (loadFinished) {

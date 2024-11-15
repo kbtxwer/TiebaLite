@@ -42,7 +42,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
     private var recyclerViewAdapter: RecyclerFloorAdapter? = null
     private var tid = ""
     private var pid = ""
-    private var spid: String? = null
+    private var spid: String = ""
     private var jump = false
     private var pn = 1
     private var mLayoutManager: LinearLayoutManager? = null
@@ -207,7 +207,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
         const val PARAM_JUMP = "jump"
         @JvmStatic
         @JvmOverloads
-        fun newInstance(tid: String?, pid: String?, spid: String? = null, jump: Boolean = false): FloorFragment {
+        fun newInstance(tid: String?, pid: String?, spid: String = "", jump: Boolean = false): FloorFragment {
             val fragment = FloorFragment()
             val bundle = Bundle()
             bundle.putString(PARAM_TID, tid)

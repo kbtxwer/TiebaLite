@@ -19,14 +19,14 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SearchUserFragment : BaseFragment() {
-    private var keyword: String? = null
+    private var keyword: String = ""
     @BindView(R.id.fragment_search_refresh_layout)
     lateinit var mRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.fragment_search_recycler_view)
     lateinit var mRecyclerView: RecyclerView
     private var mAdapter: SearchUserAdapter? = null
     private var mData: SearchUserDataBean? = null
-    fun setKeyword(keyword: String?, refresh: Boolean) {
+    fun setKeyword(keyword: String, refresh: Boolean) {
         this.keyword = keyword
         if (refresh) {
             refresh()
@@ -45,7 +45,7 @@ class SearchUserFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
-            keyword = arguments!!.getString(ARG_KEYWORD)
+            keyword = requireArguments().getString(ARG_KEYWORD) ?: ""
         }
     }
 

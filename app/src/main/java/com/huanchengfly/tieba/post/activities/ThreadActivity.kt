@@ -88,7 +88,7 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
             }
         }
     }
-    private var navigationHelper: NavigationHelper? = null
+    private lateinit var navigationHelper: NavigationHelper
     public override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("tid", tid)
         outState.putString("pid", pid)
@@ -474,24 +474,21 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun isLz(postListItemBean: PostListItemBean?): Boolean {
-        return postListItemBean != null && TextUtils.equals(dataBean!!.thread.author.id, postListItemBean.authorId)
+        return postListItemBean != null && TextUtils.equals(dataBean?.thread?.author?.id, postListItemBean.authorId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_report -> navigationHelper!!.navigationByData(NavigationHelper.ACTION_URL,
-                    getString(R.string.url_post_report,
-                        dataBean!!.forum.id,
-                        dataBean!!.thread.threadId,
-                        dataBean!!.thread.postId
-                    ))
-            R.id.menu_share -> TiebaUtil.shareText(this, url, if (dataBean == null) null else dataBean!!.thread.title)
+            R.id.menu_report -> navigationHelper.navigationByData(NavigationHelper.ACTION_URL, dataBean?.let {
+                getString(R.string.url_post_report, it.forum.id, it.thread.threadId, it.thread.postId
+                ) })
+            R.id.menu_share -> TiebaUtil.shareText(this, url, dataBean?.thread?.title?:"")
             R.id.menu_jump_page -> {
                 val dialog = EditTextDialog(this)
                         .setInputType(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL)
                         .setHelperText(String.format(getString(R.string.tip_jump_page), page, totalPage))
-                        .setOnSubmitListener { page: String? ->
-                            val pn = Integer.valueOf(page!!)
+                        .setOnSubmitListener { page: String ->
+                            val pn = Integer.valueOf(page)
                             if (pn in 1..totalPage) {
                                 this.page = pn
                                 refresh(false)
@@ -526,9 +523,8 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
             } else {
                 mAdapter.isImmersive = false
             }
-            R.id.menu_delete -> TiebaApi.getInstance().delThread(dataBean!!.forum.id,
-                dataBean!!.forum.name, dataBean!!.thread.id, dataBean!!.anti.tbs
-            ).enqueue(object : Callback<CommonResponse> {
+            R.id.menu_delete -> dataBean?.let {TiebaApi.getInstance().delThread(it.forum.id,
+                it.forum.name, it.thread.id, it.anti.tbs)}?.enqueue(object : Callback<CommonResponse> {
                 override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                     Toast.makeText(this@ThreadActivity, getString(R.string.toast_delete_error, t.message), Toast.LENGTH_SHORT).show()
                 }
@@ -599,24 +595,26 @@ class ThreadActivity : BaseActivity(), View.OnClickListener {
         }
 
     private fun collect(commonAPICallback: CommonAPICallback<CommonResponse>?, update: Boolean) {
-        if (dataBean == null || tid == null) return
-        val postListItemBean = firstVisibleItem ?: return
-        TiebaApi.getInstance().addStore(tid!!, postListItemBean.id, tbs = dataBean!!.anti.tbs).enqueue(object : Callback<CommonResponse> {
-            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
-                if (t is TiebaException) {
-                    commonAPICallback?.onFailure(t.code, t.message)
-                } else {
-                    commonAPICallback?.onFailure(-1, t.message)
+        dataBean?.let { dataBean -> tid ?.let { tid ->
+            val postListItemBean = firstVisibleItem ?: return
+            TiebaApi.getInstance().addStore(tid, postListItemBean.id, tbs = dataBean.anti.tbs).enqueue(object : Callback<CommonResponse> {
+                override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                    if (t is TiebaException) {
+                        commonAPICallback?.onFailure(t.code, t.message)
+                    } else {
+                        commonAPICallback?.onFailure(-1, t.message)
+                    }
                 }
-            }
 
-            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
-                commonAPICallback?.onSuccess(response.body()!!)
-            }
+                override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                    commonAPICallback?.onSuccess(response.body()!!)
+                }
 
-        })
-        if (!update) Util.miuiFav(this, getString(R.string.title_miui_fav, dataBean!!.thread.title), url)
-    }
+            })
+            if (!update) Util.miuiFav(this, getString(R.string.title_miui_fav, dataBean.thread.title), url)
+
+        } }
+           }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_tie_toolbar, menu)

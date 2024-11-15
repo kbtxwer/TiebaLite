@@ -5,60 +5,60 @@ import com.huanchengfly.tieba.post.models.BaseBean
 
 class PicPageBean : BaseBean() {
     @SerializedName("error_code")
-    val errorCode: String? = null
-    val forum: ForumBean? = null
+    val errorCode: String = ""
+    val forum: ForumBean = ForumBean()
 
     @SerializedName("pic_amount")
-    val picAmount: String? = null
+    val picAmount: String = ""
 
     @SerializedName("pic_list")
-    val picList: List<PicBean>? = null
+    val picList: List<PicBean> = mutableListOf()
 
     class ForumBean {
-        val name: String? = null
-        val id: String? = null
+        val name: String = ""
+        val id: String = ""
 
     }
 
     class PicBean {
         @SerializedName("overall_index")
-        val overAllIndex: String? = null
-        val img: ImgBean? = null
+        val overAllIndex: String = ""
+        val img: ImgBean = ImgBean()
 
         @SerializedName("post_id")
-        val postId: String? = null
+        val postId: String = ""
 
         @SerializedName("user_id")
-        val userId: String? = null
+        val userId: String = ""
 
         @SerializedName("user_name")
-        val userName: String? = null
+        val userName: String = ""
 
     }
 
     class ImgBean {
-        val original: ImgInfoBean? = null
-        val medium: ImgInfoBean? = null
-        val screen: ImgInfoBean? = null
+        val original: ImgInfoBean = ImgInfoBean()
+        val medium: ImgInfoBean = ImgInfoBean()
+        val screen: ImgInfoBean = ImgInfoBean()
 
     }
 
     class ImgInfoBean {
-        val id: String? = null
-        val width: String? = null
-        val height: String? = null
-        val size: String? = null
-        val format: String? = null
+        val id: String = ""
+        val width: String = ""
+        val height: String = ""
+        val size: String = ""
+        val format: String = ""
 
         @SerializedName("waterurl")
-        val waterUrl: String? = null
+        val waterUrl: String = ""
 
         @SerializedName("big_cdn_src")
-        val bigCdnSrc: String? = null
-        val url: String? = null
+        val bigCdnSrc: String = ""
+        val url: String = ""
 
         @SerializedName("original_src")
-        val originalSrc: String? = null
+        val originalSrc: String = ""
 
     }
 }

@@ -127,9 +127,9 @@ interface WebTiebaApi {
             @Field("z") threadId: String,
             @Field("lp") lp: String = "6026",
             @Field("nick_name") nickName: String,
-            @Field("pid") postId: String? = null,
-            @Field("lzl_id") replyPostId: String? = null,
-            @Field("floor") floor: String? = null,
+            @Field("pid") postId: String = "",
+            @Field("lzl_id") replyPostId: String = "",
+            @Field("floor") floor: String = "",
             @Field("_BSK") bsk: String,
             @retrofit2.http.Header(Header.REFERER) referer: String
     ): Call<WebReplyResultBean>

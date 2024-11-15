@@ -6,16 +6,16 @@ import com.huanchengfly.tieba.post.utils.GsonUtil
 
 class SignResultBean : BaseBean() {
     @SerializedName("user_info")
-    val userInfo: UserInfo? = null
+    val userInfo: UserInfo = UserInfo()
 
     @SerializedName("error_code")
-    val errorCode: String? = null
+    val errorCode: String = ""
 
     fun getErrorCode() = Integer.valueOf(errorCode!!)
 
     @SerializedName("error_msg")
-    val errorMsg: String? = null
-    val time: Long? = null
+    val errorMsg: String = ""
+    val time: Long = 0
 
     override fun toString(): String {
         return GsonUtil.getGson().toJson(this)
@@ -23,25 +23,25 @@ class SignResultBean : BaseBean() {
 
     inner class UserInfo : BaseBean() {
         @SerializedName("user_id")
-        val userId: String? = null
+        val userId: String = ""
 
         @SerializedName("is_sign_in")
-        val isSignIn: String? = null
+        val isSignIn: String = ""
 
         @SerializedName("user_sign_rank")
-        val userSignRank: String? = null
+        val userSignRank: String = ""
 
         @SerializedName("sign_time")
-        val signTime: String? = null
+        val signTime: String = ""
 
         @SerializedName("sign_bonus_point")
-        val signBonusPoint: String? = null
+        val signBonusPoint: String = ""
 
         @SerializedName("level_name")
-        val levelName: String? = null
+        val levelName: String = ""
 
         @SerializedName("levelup_score")
-        val levelUpScore: String? = null
+        val levelUpScore: String = ""
 
     }
 }

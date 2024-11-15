@@ -8,75 +8,75 @@ import com.huanchengfly.tieba.post.models.BaseBean
 
 class SearchUserBean : BaseBean() {
     @SerializedName("no")
-    val errorCode: Int? = null
+    val errorCode: Int = 0
 
     @SerializedName("error")
-    val errorMsg: String? = null
-    val data: SearchUserDataBean? = null
+    val errorMsg: String = ""
+    val data: SearchUserDataBean = SearchUserDataBean()
 
     class SearchUserDataBean {
         @SerializedName("pn")
-        val pageNum: Int? = null
+        val pageNum: Int = 0
 
         @SerializedName("has_more")
-        val hasMore: Int? = null
+        val hasMore: Int = 0
 
         @JsonAdapter(UserExactMatchAdapter::class)
-        val exactMatch: UserBean? = null
+        val exactMatch: UserBean = UserBean()
 
         @JsonAdapter(UserFuzzyMatchAdapter::class)
-        val fuzzyMatch: List<UserBean>? = null
+        val fuzzyMatch: List<UserBean> = mutableListOf()
 
     }
 
     class UserBean {
-        var id: String? = null
+        var id: String = ""
             private set
-        var intro: String? = null
+        var intro: String = ""
             private set
 
         @SerializedName("user_nickname")
-        var userNickname: String? = null
+        var userNickname: String = ""
             private set
-        var name: String? = null
+        var name: String = ""
             private set
-        var portrait: String? = null
+        var portrait: String = ""
             private set
 
         @SerializedName("fans_num")
-        var fansNum: String? = null
+        var fansNum: String = ""
             private set
 
         @SerializedName("has_concerned")
         var hasConcerned = 0
             private set
 
-        fun setId(id: String?): UserBean {
+        fun setId(id: String): UserBean {
             this.id = id
             return this
         }
 
-        fun setIntro(intro: String?): UserBean {
+        fun setIntro(intro: String): UserBean {
             this.intro = intro
             return this
         }
 
-        fun setUserNickname(userNickname: String?): UserBean {
+        fun setUserNickname(userNickname: String): UserBean {
             this.userNickname = userNickname
             return this
         }
 
-        fun setName(name: String?): UserBean {
+        fun setName(name: String): UserBean {
             this.name = name
             return this
         }
 
-        fun setPortrait(portrait: String?): UserBean {
+        fun setPortrait(portrait: String): UserBean {
             this.portrait = portrait
             return this
         }
 
-        fun setFansNum(fansNum: String?): UserBean {
+        fun setFansNum(fansNum: String): UserBean {
             this.fansNum = fansNum
             return this
         }

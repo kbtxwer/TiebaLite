@@ -5,59 +5,59 @@ import com.huanchengfly.tieba.post.models.BaseBean
 
 class ProfileBean : BaseBean() {
     @SerializedName("error_code")
-    val errorCode: String? = null
+    val errorCode: String = ""
 
     @SerializedName("error_msg")
-    val errorMsg: String? = null
-    val anti: AntiBean? = null
-    val user: UserBean? = null
+    val errorMsg: String = ""
+    val anti: AntiBean = AntiBean()
+    val user: UserBean = UserBean()
 
     class AntiBean {
-        val tbs: String? = null
+        val tbs: String = ""
     }
 
     class UserBean {
-        val id: String? = null
-        val name: String? = null
+        val id: String = ""
+        val name: String = ""
 
         @SerializedName("name_show")
-        val nameShow: String? = null
-        val portrait: String? = null
-        val intro: String? = null
-        val sex: String? = null
+        val nameShow: String = ""
+        val portrait: String = ""
+        val intro: String = ""
+        val sex: String = ""
 
         @SerializedName("post_num")
-        val postNum: String? = null
+        val postNum: String = ""
 
         @SerializedName("repost_num")
-        val repostNum: String? = null
+        val repostNum: String = ""
 
         @SerializedName("thread_num")
-        val threadNum: String? = null
+        val threadNum: String = ""
 
         @SerializedName("tb_age")
-        val tbAge: String? = null
+        val tbAge: String = ""
 
         @SerializedName("my_like_num")
-        val myLikeNum: String? = null
+        val myLikeNum: String = ""
 
         @SerializedName("like_forum_num")
-        val likeForumNum: String? = null
+        val likeForumNum: String = ""
 
         @SerializedName("concern_num")
-        val concernNum: String? = null
+        val concernNum: String = ""
 
         @SerializedName("fans_num")
-        val fansNum: String? = null
+        val fansNum: String = ""
 
         @SerializedName("has_concerned")
-        var hasConcerned: String? = null
+        var hasConcerned: String = ""
             private set
 
         @SerializedName("is_fans")
-        val isFans: String? = null
+        val isFans: String = ""
 
-        fun setHasConcerned(hasConcerned: String?): UserBean {
+        fun setHasConcerned(hasConcerned: String): UserBean {
             this.hasConcerned = hasConcerned
             return this
         }

@@ -22,7 +22,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
-    private var keyword: String? = null
+    private var keyword: String = ""
     @BindView(R.id.fragment_search_refresh_layout)
     lateinit var refreshLayout: SwipeRefreshLayout
     @BindView(R.id.fragment_search_recycler_view)
@@ -32,7 +32,7 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
     private var filter: SearchThreadFilter = SearchThreadFilter.ONLY_THREAD
     private var mData: SearchThreadBean.DataBean? = null
     private var page = 0
-    fun setKeyword(keyword: String?, refresh: Boolean) {
+    fun setKeyword(keyword: String, refresh: Boolean) {
         this.keyword = keyword
         if (refresh) {
             refresh()
@@ -53,7 +53,7 @@ class SearchThreadFragment : BaseFragment(), OnOrderSwitchListener {
         order = SearchThreadOrder.NEW
         filter = SearchThreadFilter.ONLY_THREAD
         if (arguments != null) {
-            keyword = arguments!!.getString(ARG_KEYWORD)
+            keyword = requireArguments().getString(ARG_KEYWORD)?:""
         }
     }
 

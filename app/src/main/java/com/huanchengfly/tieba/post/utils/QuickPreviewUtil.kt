@@ -92,16 +92,16 @@ object QuickPreviewUtil {
             override fun onResponse(call: Call<ForumPageBean>, response: Response<ForumPageBean>) {
                 val forumPageBean = response.body()!!
                 callback.onSuccess(PreviewInfo()
-                        .setTitle(context.getString(R.string.title_forum, forumPageBean.forum?.name))
-                        .setSubtitle(forumPageBean.forum?.slogan)
+                        .setTitle(context.getString(R.string.title_forum, forumPageBean.forum.name))
+                        .setSubtitle(forumPageBean.forum.slogan)
                         .setUrl(uri.toString())
-                        .setIconUrl(forumPageBean.forum?.avatar))
+                        .setIconUrl(forumPageBean.forum.avatar))
             }
         })
     }
 
     @JvmStatic
-    fun getPreviewInfo(context: Context, url: String?, callback: CommonCallback<PreviewInfo>) {
+    fun getPreviewInfo(context: Context, url: String, callback: CommonCallback<PreviewInfo>) {
         val uri = Uri.parse(url)
         if (isTiebaUrl(uri.host) && !TextUtils.isEmpty(uri.path)) {
             val path = uri.path
@@ -133,11 +133,11 @@ object QuickPreviewUtil {
     class PreviewInfo {
         var icon: Icon? = null
             private set
-        var title: String? = null
+        var title: String = ""
             private set
-        var subtitle: String? = null
+        var subtitle: String = ""
             private set
-        var url: String? = null
+        var url: String = ""
             private set
 
         fun setIconRes(@DrawableRes res: Int): PreviewInfo {
@@ -145,22 +145,22 @@ object QuickPreviewUtil {
             return this
         }
 
-        fun setIconUrl(url: String?): PreviewInfo {
+        fun setIconUrl(url: String): PreviewInfo {
             icon = Icon(url)
             return this
         }
 
-        fun setTitle(title: String?): PreviewInfo {
+        fun setTitle(title: String): PreviewInfo {
             this.title = title
             return this
         }
 
-        fun setSubtitle(subtitle: String?): PreviewInfo {
+        fun setSubtitle(subtitle: String): PreviewInfo {
             this.subtitle = subtitle
             return this
         }
 
-        fun setUrl(url: String?): PreviewInfo {
+        fun setUrl(url: String): PreviewInfo {
             this.url = url
             return this
         }
@@ -173,7 +173,7 @@ object QuickPreviewUtil {
             return this
         }
 
-        fun setUrl(url: String?): Icon {
+        fun setUrl(url: String): Icon {
             this.url = url
             return this
         }
@@ -185,13 +185,13 @@ object QuickPreviewUtil {
 
         var type: Int
             private set
-        var url: String? = null
+        var url: String = ""
             private set
         @DrawableRes
         var res = 0
             private set
 
-        constructor(url: String?) {
+        constructor(url: String) {
             type = TYPE_URL
             this.url = url
         }

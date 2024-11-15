@@ -88,7 +88,7 @@ interface MiniTiebaApi {
             @Field("kw") forumName: String,
             @Field("pn") page: Int = 1,
             @Field("sort_type") sort_type: Int,
-            @Field("cid") goodClassifyId: String? = null,
+            @Field("cid") goodClassifyId: String = "",
             @Field("is_good") is_good: String? = if (TextUtils.isEmpty(goodClassifyId)) null else "1",
             @Field("q_type") q_type: String = "2",
             @Field("st_type") st_type: String = "tb_forumlist",

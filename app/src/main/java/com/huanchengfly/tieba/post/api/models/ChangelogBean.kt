@@ -8,10 +8,10 @@ class ChangelogBean : BaseBean() {
     val errorCode = 0
 
     @SerializedName("error_msg")
-    val errorMsg: String? = null
+    val errorMsg: String = ""
 
     @SerializedName("success")
     val isSuccess = false
-    val result: String? = null
+    val result: String = ""
 
 }

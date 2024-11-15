@@ -38,9 +38,9 @@ class FloorActivity : BaseActivity() {
     private var dataBean: SubFloorListBean? = null
     private var recyclerViewAdapter: RecyclerFloorAdapter? = null
     private var navigationHelper: NavigationHelper? = null
-    private var tid: String? = null
-    private var pid: String? = null
-    private var spid: String? = null
+    private var tid: String = ""
+    private var pid: String = ""
+    private var spid: String = ""
     private var hasMore = false
     private var pn = 1
     private val replyReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -174,9 +174,9 @@ class FloorActivity : BaseActivity() {
                         val subFloorListBean = response.body() ?: return
                         dataBean = subFloorListBean
                         recyclerViewAdapter!!.setData(subFloorListBean)
-                        pid = subFloorListBean.post!!.id
-                        spid = null
-                        hasMore = subFloorListBean.page!!.currentPage.toInt() < subFloorListBean.page.totalPage.toInt()
+                        pid = subFloorListBean.post.id
+                        spid = ""
+                        hasMore = subFloorListBean.page.currentPage.toInt() < subFloorListBean.page.totalPage.toInt()
                         if (!hasMore) {
                             recyclerViewAdapter!!.loadEnd()
                         }
@@ -189,7 +189,7 @@ class FloorActivity : BaseActivity() {
     private fun loadMore() {
         if (!hasMore) return
         TiebaApi.getInstance()
-                .floor(tid!!, pn, pid, spid)
+                .floor(tid, pn, pid, spid)
                 .enqueue(object : Callback<SubFloorListBean> {
                     override fun onFailure(call: Call<SubFloorListBean>, t: Throwable) {
                         recyclerViewAdapter!!.loadFailed()
@@ -199,9 +199,9 @@ class FloorActivity : BaseActivity() {
                         val subFloorListBean = response.body() ?: return
                         dataBean = subFloorListBean
                         recyclerViewAdapter!!.addData(subFloorListBean)
-                        pid = subFloorListBean.post!!.id
-                        spid = null
-                        hasMore = subFloorListBean.page!!.currentPage.toInt() < subFloorListBean.page.totalPage.toInt()
+                        pid = subFloorListBean.post.id
+                        spid = ""
+                        hasMore = subFloorListBean.page.currentPage.toInt() < subFloorListBean.page.totalPage.toInt()
                         if (!hasMore) {
                             recyclerViewAdapter!!.loadEnd()
                         }

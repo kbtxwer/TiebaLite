@@ -287,7 +287,7 @@ public class ForumAdapter extends MultiBaseAdapter<ForumPageBean.ThreadBean> {
                 }
                 break;
             case TYPE_THREAD_VIDEO:
-                if (threadBean.getVideoInfo() == null) {
+                if (threadBean.getVideoInfo().getVideoUrl().isEmpty()) {
                     break;
                 }
                 VideoPlayerStandard videoPlayerStandard = viewHolder.getView(R.id.forum_item_content_video);
@@ -341,10 +341,10 @@ public class ForumAdapter extends MultiBaseAdapter<ForumPageBean.ThreadBean> {
         if ("1".equals(threadBean.isTop())) {
             return TYPE_THREAD_TOP;
         }
-        if (threadBean.getVideoInfo() != null) {
+        if (!threadBean.getVideoInfo().getVideoUrl().isEmpty()) {
             return TYPE_THREAD_VIDEO;
         }
-        if (threadBean.getMedia() == null) {
+        if (threadBean.getMedia().isEmpty()) {
             return TYPE_THREAD_COMMON;
         }
         if (threadBean.getMedia().size() == 1) {

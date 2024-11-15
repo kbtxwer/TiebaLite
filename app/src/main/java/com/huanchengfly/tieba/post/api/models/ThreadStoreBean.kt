@@ -5,10 +5,10 @@ import com.huanchengfly.tieba.post.models.BaseBean
 
 data class ThreadStoreBean(
         @SerializedName("error_code")
-        val errorCode: String? = null,
-        val error: ErrorInfo? = null,
+        val errorCode: String = "",
+        val error: ErrorInfo = ErrorInfo(),
         @SerializedName("store_thread")
-        val storeThread: List<ThreadStoreInfo>? = null
+        val storeThread: List<ThreadStoreInfo> = mutableListOf()
 ) : BaseBean() {
     data class ThreadStoreInfo(
             @SerializedName("thread_id")
@@ -40,30 +40,30 @@ data class ThreadStoreBean(
     ) : BaseBean()
 
     data class MediaInfo(
-            val type: String? = null,
+            val type: String = "",
             @SerializedName("small_Pic")
-            val smallPic: String? = null,
+            val smallPic: String = "",
             @SerializedName("big_pic")
-            val bigPic: String? = null,
-            val width: String? = null,
-            val height: String? = null
+            val bigPic: String = "",
+            val width: String = "",
+            val height: String = ""
     ) : BaseBean()
 
     data class AuthorInfo(
             @SerializedName("lz_uid")
-            val lzUid: String? = null,
-            val name: String? = null,
+            val lzUid: String = "",
+            val name: String = "",
             @SerializedName("name_show")
-            val nameShow: String? = null,
+            val nameShow: String = "",
             @SerializedName("user_portrait")
-            val userPortrait: String? = null
+            val userPortrait: String = ""
 
     ) : BaseBean()
 
     data class ErrorInfo(
             @SerializedName("errno")
-            val errorCode: String? = null,
+            val errorCode: String = "",
             @SerializedName("errmsg")
-            val errorMsg: String? = null
+            val errorMsg: String = ""
     ) : BaseBean()
 }

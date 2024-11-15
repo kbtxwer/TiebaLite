@@ -66,7 +66,7 @@ import kotlin.math.abs
 
 class ForumActivity : BaseActivity(), View.OnClickListener, OnRefreshedListener {
     private var mSortType = ForumSortType.REPLY_TIME
-    private var forumName: String? = null
+    private var forumName: String = ""
     private var firstLoaded = false
     private var animated = false
 
@@ -135,13 +135,13 @@ class ForumActivity : BaseActivity(), View.OnClickListener, OnRefreshedListener 
         if (intent.getBooleanExtra("jumpByUrl", false)) {
             val url = intent.getStringExtra("url")
             val uri = Uri.parse(url)
-            forumName = uri.getQueryParameter("kw")
+            forumName = uri.getQueryParameter("kw") ?: ""
             title = getString(R.string.title_forum, forumName)
         } else {
-            forumName = intent.getStringExtra(EXTRA_FORUM_NAME)
+            forumName = intent.getStringExtra(EXTRA_FORUM_NAME) ?: ""
             title = getString(R.string.title_forum, forumName)
         }
-        if (forumName == null) {
+        if (forumName.isEmpty()) {
             finish()
             return
         }

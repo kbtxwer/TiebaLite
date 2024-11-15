@@ -5,15 +5,13 @@ import com.huanchengfly.tieba.post.models.BaseBean
 import com.huanchengfly.tieba.post.models.ErrorBean
 
 class MsgBean : ErrorBean() {
-    val message: MessageBean? = null
+    val message: MessageBean = MessageBean()
 
     inner class MessageBean : BaseBean() {
         @SerializedName("replyme")
-        val replyMe: String? = null
-
+        val replyMe: String = ""
         @SerializedName("atme")
-        val atMe: String? = null
-        val fans: String? = null
-
+        val atMe: String = ""
+        val fans: String = ""
     }
 }

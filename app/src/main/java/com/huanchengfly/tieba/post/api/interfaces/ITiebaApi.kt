@@ -68,7 +68,7 @@ interface ITiebaApi {
             forumName: String,
             page: Int = 1,
             sortType: ForumSortType = ForumSortType.REPLY_TIME,
-            goodClassifyId: String? = null
+            goodClassifyId: String = ""
     ): Call<ForumPageBean>
 
     /**
@@ -537,7 +537,7 @@ interface ITiebaApi {
     fun webForumPage(
             forumName: String,
             page: Int,
-            goodClassifyId: String? = null,
+            goodClassifyId: String = "",
             sortType: ForumSortType = ForumSortType.REPLY_TIME,
             pageSize: Int = 30
     ): Call<ForumBean>

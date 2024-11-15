@@ -8,46 +8,46 @@ import com.huanchengfly.tieba.post.models.BaseBean
 
 class SearchForumBean : BaseBean() {
     @SerializedName("no")
-    val errorCode: Int? = null
+    val errorCode: Int = 0
 
     @SerializedName("error")
-    val errorMsg: String? = null
-    val data: DataBean? = null
+    val errorMsg: String = ""
+    val data: DataBean = DataBean()
 
     class ExactForumInfoBean : ForumInfoBean() {
-        val intro: String? = null
-        val slogan: String? = null
+        val intro: String = ""
+        val slogan: String = ""
 
         @SerializedName("is_jiucuo")
-        val isJiucuo: Int? = null
+        val isJiucuo: Int = 0
 
     }
 
     open class ForumInfoBean {
         @SerializedName("forum_id")
-        var forumId: Int? = null
+        var forumId: Int = 0
             private set
 
         @SerializedName("forum_name")
-        var forumName: String? = null
+        var forumName: String = ""
             private set
 
         @SerializedName("forum_name_show")
-        var forumNameShow: String? = null
+        var forumNameShow: String = ""
             private set
-        var avatar: String? = null
+        var avatar: String = ""
             private set
 
         @SerializedName("post_num")
-        var postNum: String? = null
+        var postNum: String = ""
             private set
 
         @SerializedName("concern_num")
-        var concernNum: String? = null
+        var concernNum: String = ""
             private set
 
         @SerializedName("has_concerned")
-        var hasConcerned: Int? = null
+        var hasConcerned: Int = 0
             private set
 
         fun setForumId(forumId: Int): ForumInfoBean {
@@ -55,27 +55,27 @@ class SearchForumBean : BaseBean() {
             return this
         }
 
-        fun setForumName(forumName: String?): ForumInfoBean {
+        fun setForumName(forumName: String): ForumInfoBean {
             this.forumName = forumName
             return this
         }
 
-        fun setForumNameShow(forumNameShow: String?): ForumInfoBean {
+        fun setForumNameShow(forumNameShow: String): ForumInfoBean {
             this.forumNameShow = forumNameShow
             return this
         }
 
-        fun setAvatar(avatar: String?): ForumInfoBean {
+        fun setAvatar(avatar: String): ForumInfoBean {
             this.avatar = avatar
             return this
         }
 
-        fun setPostNum(postNum: String?): ForumInfoBean {
+        fun setPostNum(postNum: String): ForumInfoBean {
             this.postNum = postNum
             return this
         }
 
-        fun setConcernNum(concernNum: String?): ForumInfoBean {
+        fun setConcernNum(concernNum: String): ForumInfoBean {
             this.concernNum = concernNum
             return this
         }
@@ -94,10 +94,10 @@ class SearchForumBean : BaseBean() {
         val page = 0
 
         @JsonAdapter(ForumFuzzyMatchAdapter::class)
-        val fuzzyMatch: List<ForumInfoBean>? = null
+        val fuzzyMatch: List<ForumInfoBean> = mutableListOf()
 
         @JsonAdapter(ExactMatchAdapter::class)
-        val exactMatch: ExactForumInfoBean? = null
+        val exactMatch: ExactForumInfoBean = ExactForumInfoBean()
 
     }
 }

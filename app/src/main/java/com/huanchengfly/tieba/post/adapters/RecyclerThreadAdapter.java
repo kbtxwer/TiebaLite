@@ -726,14 +726,14 @@ public class RecyclerThreadAdapter extends MultiBaseAdapter<ThreadContentBean.Po
         float widthFloat, heightFloat;
         if (contentBean.getType().equals("3") || contentBean.getType().equals("20")) {
             String[] strings = contentBean.getBsize().split(",");
-            widthFloat = Float.valueOf(strings[0]);
-            heightFloat = Float.valueOf(strings[1]);
+            widthFloat = Float.parseFloat(strings[0]);
+            heightFloat = Float.parseFloat(strings[1]);
             heightFloat *= getMaxWidth(floor) / widthFloat;
             widthFloat = getMaxWidth(floor);
         } else {
-            float width = Float.valueOf(contentBean.getWidth());
+            float width = Float.parseFloat(contentBean.getWidth());
             widthFloat = getMaxWidth(floor);
-            heightFloat = Float.valueOf(contentBean.getHeight());
+            heightFloat = Float.parseFloat(contentBean.getHeight());
             heightFloat *= widthFloat / width;
         }
         int width = Math.round(widthFloat);

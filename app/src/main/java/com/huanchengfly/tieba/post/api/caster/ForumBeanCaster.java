@@ -2,8 +2,8 @@ package com.huanchengfly.tieba.post.api.caster;
 
 import android.webkit.URLUtil;
 
+import com.huanchengfly.tieba.post.api.models.ForumBean;
 import com.huanchengfly.tieba.post.api.models.ForumPageBean;
-import com.huanchengfly.tieba.post.api.models.web.ForumBean;
 import com.huanchengfly.tieba.post.BaseApplication;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class ForumBeanCaster extends ICaster<ForumBean, ForumPageBean> {
     @Override
     public ForumPageBean cast(ForumBean forumBean) {
         ForumPageBean forumPageBean = new ForumPageBean();
-        ForumBean.FrsDataBean frsDataBean = forumBean.getData().getFrsData();
+        ForumBean.FrsDataBean frsDataBean = forumBean.getFrsData();
         forumPageBean.setErrorCode(String.valueOf(forumBean.getErrorCode()));
         forumPageBean.setErrorMsg(forumBean.getErrorMsg());
         forumPageBean.setAnti(frsDataBean.getAnti());
@@ -46,24 +46,22 @@ public class ForumBeanCaster extends ICaster<ForumBean, ForumPageBean> {
                 if (mediaInfoBean != null) mediaInfoBeans.add(mediaBeanImpl.cast(mediaBean));
             }
             abstractBeans.add(new ForumPageBean.AbstractBean("0", frsThreadBean.getAbstracts()));
-            int agreeNum = 0;
-            if (frsThreadBean.getAgree() != null) {
-                agreeNum = frsThreadBean.getAgree().getAgreeNum();
-            }
+            int agreeNum =  frsThreadBean.getAgree().getAgreeNum();
+            frsThreadBean.getVideoInfo();
             threadBean.setAbstractString(frsThreadBean.getAbstracts())
                     .setAbstractBeans(abstractBeans)
                     .setAgreeNum(String.valueOf(agreeNum))
                     .setAuthorId(frsThreadBean.getAuthor().getId())
                     .setId(frsThreadBean.getId())
-                    .setIsGood(frsThreadBean.getIsGood())
-                    .setIsNoTitle(frsThreadBean.getIsNoTitle())
-                    .setIsTop(frsThreadBean.getIsTop())
+                    .setIsGood(frsThreadBean.isGood())
+                    .setIsNoTitle(frsThreadBean.isNoTitle())
+                    .setIsTop(frsThreadBean.isTop())
                     .setLastTime(frsThreadBean.getLastTime())
                     .setLastTimeInt(frsThreadBean.getLastTimeInt())
                     .setReplyNum(frsThreadBean.getReplyNum())
                     .setTid(frsThreadBean.getTid())
                     .setTitle(frsThreadBean.getTitle())
-                    .setVideoInfo(frsThreadBean.getVideoInfo() != null ? frsThreadBean.getVideoInfo().setVideoUrl(frsThreadBean.getVideoInfo().getOriginVideoUrl()) : null)
+                    .setVideoInfo(frsThreadBean.getVideoInfo().setVideoUrl(frsThreadBean.getVideoInfo().getOriginVideoUrl()))
                     .setMedia(mediaInfoBeans)
                     .setViewNum(frsThreadBean.getViewNum());
             return threadBean;
@@ -95,7 +93,7 @@ public class ForumBeanCaster extends ICaster<ForumBean, ForumPageBean> {
             forumBean.setGoodClassify(frsForumBean.getGoodClassify());
             forumBean.setId(frsForumBean.getId());
             forumBean.setIsExists(frsForumBean.isExists() ? "1" : "0");
-            forumBean.setIsLike(frsForumBean.getIsLike());
+            forumBean.setIsLike(frsForumBean.isLike());
             forumBean.setLevelId(frsForumBean.getLevelId());
             forumBean.setLevelName(frsForumBean.getLevelName());
             forumBean.setLevelUpScore(frsForumBean.getLevelUpScore());

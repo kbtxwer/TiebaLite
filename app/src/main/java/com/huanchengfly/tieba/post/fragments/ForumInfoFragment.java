@@ -16,12 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.huanchengfly.tieba.post.api.models.ForumBean;
 import com.huanchengfly.tieba.post.ui.theme.utils.ThemeUtils;
 import com.huanchengfly.tieba.post.api.ForumSortType;
 import com.huanchengfly.tieba.post.api.TiebaApi;
 import com.huanchengfly.tieba.post.api.caster.ForumBeanCaster;
 import com.huanchengfly.tieba.post.api.models.ForumPageBean;
-import com.huanchengfly.tieba.post.api.models.web.ForumBean;
 import com.huanchengfly.tieba.post.api.retrofit.exception.TiebaException;
 import com.huanchengfly.tieba.post.R;
 import com.huanchengfly.tieba.post.adapters.ZyqFriendAdapter;
@@ -177,7 +177,7 @@ public class ForumInfoFragment extends BaseFragment implements Refreshable, Scro
     private void refresh() {
         mRefreshLayout.setRefreshing(true);
         TiebaApi.getInstance()
-                .webForumPage(forumName, 1, null, ForumSortType.REPLY_TIME, 30)
+                .webForumPage(forumName, 1, "", ForumSortType.REPLY_TIME, 30)
                 .enqueue(new Callback<ForumBean>() {
                     @Override
                     public void onResponse(Call<ForumBean> call, Response<ForumBean> response) {
@@ -191,7 +191,7 @@ public class ForumInfoFragment extends BaseFragment implements Refreshable, Scro
                         title.setText(getAttachContext().getString(R.string.title_forum, data.getForum().getName()));
                         slogan.setText(data.getForum().getSlogan());
                         hot.setText(getAttachContext().getString(R.string.forum_hot, data.getForum().getMemberNum(), data.getForum().getPostNum()));
-                        if (data.getForum().getZyqDefine() != null && data.getForum().getZyqDefine().size() > 0) {
+                        if (!data.getForum().getZyqDefine().isEmpty()) {
                             mFriendLinksView.setVisibility(View.VISIBLE);
                             zyqTitle.setText(data.getForum().getZyqTitle());
                             SpannableStringBuilder friendLinkBuilder = new SpannableStringBuilder();
@@ -204,13 +204,13 @@ public class ForumInfoFragment extends BaseFragment implements Refreshable, Scro
                         } else {
                             mFriendLinksView.setVisibility(View.GONE);
                         }
-                        if (data.getForum().getZyqFriend() != null && data.getForum().getZyqFriend().size() > 0) {
+                        if (!data.getForum().getZyqFriend().isEmpty()) {
                             mFriendForumsView.setVisibility(View.VISIBLE);
                             friendForumsRecyclerView.setAdapter(new ZyqFriendAdapter(getAttachContext(), data.getForum().getZyqFriend()));
                         } else {
                             mFriendForumsView.setVisibility(View.GONE);
                         }
-                        if (data.getForum().getManagers() != null && data.getForum().getManagers().size() > 0) {
+                        if (!data.getForum().getManagers().isEmpty()) {
                             mManagersView.setVisibility(View.VISIBLE);
                             SpannableStringBuilder managersBuilder = new SpannableStringBuilder();
                             for (ForumPageBean.ManagerBean managerBean : data.getForum().getManagers()) {

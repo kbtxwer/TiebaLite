@@ -21,6 +21,7 @@ import com.huanchengfly.tieba.post.activities.ThreadActivity
 import com.huanchengfly.tieba.post.adapters.RecyclerFloorAdapter
 import com.huanchengfly.tieba.post.api.TiebaApi
 import com.huanchengfly.tieba.post.api.models.SubFloorListBean
+import com.huanchengfly.tieba.post.api.models.ThreadContentBean
 import com.huanchengfly.tieba.post.components.MyLinearLayoutManager
 import com.huanchengfly.tieba.post.components.dividers.ThreadDivider
 import com.huanchengfly.tieba.post.components.transformations.RadiusTransformation
@@ -90,12 +91,11 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val args = arguments
-        if (args != null) {
-            tid = args.getString(PARAM_TID, null)
-            pid = args.getString(PARAM_PID, null)
-            spid = args.getString(PARAM_SUB_POST_ID, null)
-            jump = args.getBoolean(PARAM_JUMP, false)
+        arguments ?.run {
+            tid = getString(PARAM_TID, "")
+            pid = getString(PARAM_PID, "")
+            spid = getString(PARAM_SUB_POST_ID, "")
+            jump = getBoolean(PARAM_JUMP, false)
         }
     }
 
@@ -163,8 +163,8 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
 
                     override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
                         val subFloorListBean = response.body() ?: return
-                        dataBean = subFloorListBean
-
+                        dataBean = subFloorListBean/*.also { it.post.content.forEach { it::class.java.getField("src").apply { isAccessible = true }.set(it, "")} }*/
+                        // TODO: subFloorListBean.post.content[0].src 需要进行替换，否则无法使用
                         recyclerViewAdapter.setData(subFloorListBean)
                         if (subFloorListBean.page.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
                             recyclerViewAdapter.loadEnd()
@@ -182,23 +182,22 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
             pn += 1
         }
         TiebaApi.getInstance()
-                .floor(tid, pn, pid, spid)
-                .enqueue(object : Callback<SubFloorListBean> {
-                    override fun onFailure(call: Call<SubFloorListBean>, t: Throwable) {
-                        recyclerViewAdapter.loadFailed()
-                    }
+            .floor(tid, pn, pid, spid)
+            .enqueue(object : Callback<SubFloorListBean> {
+                override fun onFailure(call: Call<SubFloorListBean>, t: Throwable) {
+                    recyclerViewAdapter.loadFailed()
+                }
 
-                    override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
-                        response.body() ?. let { subFloorListBean ->
-                            dataBean = subFloorListBean
-                            recyclerViewAdapter.addData(subFloorListBean)
-                            if (subFloorListBean.page.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
-                                recyclerViewAdapter.loadEnd()
-                            }
+                override fun onResponse(call: Call<SubFloorListBean>, response: Response<SubFloorListBean>) {
+                    response.body() ?. let { subFloorListBean ->
+                        dataBean = subFloorListBean
+                        recyclerViewAdapter.addData(subFloorListBean)
+                        if (subFloorListBean.page.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
+                            recyclerViewAdapter.loadEnd()
                         }
                     }
-
-                })
+                }
+            })
     }
 
     companion object {

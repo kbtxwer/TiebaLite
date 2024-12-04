@@ -1,10 +1,12 @@
 package com.huanchengfly.tieba.post.api.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import com.huanchengfly.tieba.post.api.adapters.PortraitAdapter
 import com.huanchengfly.tieba.post.api.adapters.SubPostListAdapter
 import com.huanchengfly.tieba.post.models.BaseBean
+import kotlinx.android.parcel.Parcelize
 
 class ThreadContentBean : BaseBean() {
     @SerializedName("error_code")
@@ -150,7 +152,8 @@ class ThreadContentBean : BaseBean() {
 
     }
 
-    class PostListItemBean {
+    @Parcelize
+    class PostListItemBean: Parcelable {
         val id: String = ""
         val title: String = ""
         val floor: String = ""

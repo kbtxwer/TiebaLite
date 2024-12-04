@@ -36,6 +36,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.ObjectKey;
 import com.huanchengfly.tieba.post.R;
 import com.huanchengfly.tieba.post.activities.PhotoViewActivity;
 import com.huanchengfly.tieba.post.BaseApplication;
@@ -419,7 +420,7 @@ public class ImageUtil {
                 getImageLoadSettings() == SETTINGS_SMART_ORIGIN ||
                 (getImageLoadSettings() == SETTINGS_SMART_LOAD && NetworkUtil.isWifiConnected(imageView.getContext()))) {
             imageView.setTag(R.id.image_load_tag, true);
-            requestBuilder = Glide.with(imageView).load(url);
+            requestBuilder = Glide.with(imageView).load(url); // 几乎所有图片的加载都会经过这里
         } else {
             imageView.setTag(R.id.image_load_tag, false);
             requestBuilder = Glide.with(imageView).load(getPlaceHolder(imageView.getContext(), type == LOAD_TYPE_SMALL_PIC ? radius : 0));

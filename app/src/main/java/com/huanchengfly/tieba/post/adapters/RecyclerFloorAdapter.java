@@ -104,6 +104,14 @@ public class RecyclerFloorAdapter extends CommonBaseAdapter<SubFloorListBean.Pos
         setNewData(data.getSubPostList());
     }
 
+    public void setData(SubFloorListBean data, ThreadContentBean.PostListItemBean post) {
+        dataBean = data;
+        SubFloorListBean.PostInfo mainSubPost = data.getPost();
+        SubFloorListBean.PostInfo postInfo = mainSubPost.copy(mainSubPost.getId(), mainSubPost.getTitle(), mainSubPost.getFloor(), mainSubPost.getTime(), post.getContent(), mainSubPost.getAuthor());
+        data.getSubPostList().add(0, postInfo);
+        setNewData(data.getSubPostList());
+    }
+
     public void addData(SubFloorListBean data) {
         dataBean = data;
         setLoadMoreData(data.getSubPostList());
@@ -385,12 +393,12 @@ public class RecyclerFloorAdapter extends CommonBaseAdapter<SubFloorListBean.Pos
                 case "3":
                     ImageView imageView = new ImageView(mContext);
                     imageView.setLayoutParams(getLayoutParams(contentBean));
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                    ImageUtil.load(imageView, ImageUtil.LOAD_TYPE_SMALL_PIC, contentBean.getSrc());
+                    imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    String imgSrcFirst = ImageUtil.getNonNullString(contentBean.getSrc(), contentBean.getOriginSrc());
+                    String imgOrigSrcFirst = ImageUtil.getNonNullString(contentBean.getOriginSrc(), contentBean.getSrc());
+                    ImageUtil.load(imageView, ImageUtil.LOAD_TYPE_SMALL_PIC, imgSrcFirst);
                     List<PhotoViewBean> photoViewBeans = new ArrayList<>();
-                    photoViewBeans.add(new PhotoViewBean(ImageUtil.getNonNullString(contentBean.getSrc(), contentBean.getOriginSrc()),
-                            ImageUtil.getNonNullString(contentBean.getOriginSrc(), contentBean.getSrc()),
-                            "1".equals(contentBean.isLongPic())));
+                    photoViewBeans.add(new PhotoViewBean(imgSrcFirst, imgOrigSrcFirst, "1".equals(contentBean.isLongPic())));
                     ImageUtil.initImageView(imageView, photoViewBeans, 0);
                     views.add(imageView);
                     break;

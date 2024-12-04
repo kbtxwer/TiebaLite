@@ -366,7 +366,7 @@ public class RecyclerThreadAdapter extends MultiBaseAdapter<ThreadContentBean.Po
             more.setOnClickListener(view -> {
                 try {
                     if (bean.getSubPostList().getSubPostList().size() < count) {
-                        FloorFragment.newInstance(threadBean.getId(), bean.getSubPostList().getPid(), "", true)
+                        FloorFragment.newInstance(threadBean.getId(), bean.getSubPostList().getPid(), "", true, bean)
                                 .show(((BaseActivity) mContext).getSupportFragmentManager(), threadBean.getId() + "_Floor");
                     } else {
                         myLinearLayout.removeAllViews();

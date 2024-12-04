@@ -22,6 +22,7 @@ import com.huanchengfly.tieba.post.adapters.RecyclerFloorAdapter
 import com.huanchengfly.tieba.post.api.TiebaApi
 import com.huanchengfly.tieba.post.api.models.SubFloorListBean
 import com.huanchengfly.tieba.post.api.models.ThreadContentBean
+import com.huanchengfly.tieba.post.api.models.ThreadContentBean.PostListItemBean
 import com.huanchengfly.tieba.post.components.MyLinearLayoutManager
 import com.huanchengfly.tieba.post.components.dividers.ThreadDivider
 import com.huanchengfly.tieba.post.components.transformations.RadiusTransformation
@@ -45,6 +46,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
     private var pid = ""
     private var spid: String = ""
     private var jump = false
+    private var post: PostListItemBean? = null
     private var pn = 1
     private var mLayoutManager: LinearLayoutManager? = null
     private val replyReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -96,6 +98,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
             pid = getString(PARAM_PID, "")
             spid = getString(PARAM_SUB_POST_ID, "")
             jump = getBoolean(PARAM_JUMP, false)
+            post = getParcelable<PostListItemBean>(PARAM_POST)
         }
     }
 
@@ -165,7 +168,7 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
                         val subFloorListBean = response.body() ?: return
                         dataBean = subFloorListBean/*.also { it.post.content.forEach { it::class.java.getField("src").apply { isAccessible = true }.set(it, "")} }*/
                         // TODO: subFloorListBean.post.content[0].src 需要进行替换，否则无法使用
-                        recyclerViewAdapter.setData(subFloorListBean)
+                        post?.let { recyclerViewAdapter.setData(subFloorListBean, it) }?:recyclerViewAdapter.setData(subFloorListBean)
                         if (subFloorListBean.page.currentPage.toInt() >= subFloorListBean.page.totalPage.toInt()) {
                             recyclerViewAdapter.loadEnd()
                         }
@@ -205,15 +208,17 @@ class FloorFragment : BaseBottomSheetDialogFragment() {
         const val PARAM_PID = "pid"
         const val PARAM_SUB_POST_ID = "spid"
         const val PARAM_JUMP = "jump"
+        const val PARAM_POST = "post"
         @JvmStatic
         @JvmOverloads
-        fun newInstance(tid: String, pid: String, spid: String = "", jump: Boolean = false): FloorFragment {
+        fun newInstance(tid: String, pid: String, spid: String = "", jump: Boolean = false, post: PostListItemBean): FloorFragment {
             val fragment = FloorFragment()
             val bundle = Bundle()
             bundle.putString(PARAM_TID, tid)
             bundle.putString(PARAM_PID, pid)
             bundle.putString(PARAM_SUB_POST_ID, spid)
             bundle.putBoolean(PARAM_JUMP, jump)
+            bundle.putParcelable(PARAM_POST, post)
             fragment.arguments = bundle
             return fragment
         }

@@ -1,66 +1,49 @@
-package com.huanchengfly.tieba.post.api.models.web;
+package com.huanchengfly.tieba.post.api.models.web
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
+import com.huanchengfly.tieba.post.models.ErrorBean
 
-import java.util.List;
-
-public class HotTopicBean extends WebBaseBean<HotTopicBean.HotTopicDataBean> {
-    public static class HotTopicDataBean {
+class HotTopicBean : ErrorBean() {
+    class HotTopicDataBean {
         @SerializedName("pmy_topic_ext")
-        private String pmyTopicExt;
+        val pmyTopicExt: String = ""
         @SerializedName("yuren_rand")
-        private int yurenRand;
+        val yurenRand: Int = 0
         @SerializedName("topic_info")
-        private TopicInfoBean topicInfo;
-
-        public TopicInfoBean getTopicInfo() {
-            return topicInfo;
-        }
-
-        public String getPmyTopicExt() {
-            return pmyTopicExt;
-        }
-
-        public int getYurenRand() {
-            return yurenRand;
-        }
+        val topicInfo = TopicInfoBean();
     }
 
-    public static class TopicInfoBean {
-        private List<TopicInfoRetBean> ret;
-
-        public List<TopicInfoRetBean> getRet() {
-            return ret;
-        }
+    class TopicInfoBean {
+        val ret = mutableListOf<TopicInfoRetBean>()
     }
 
-    public static class TopicInfoRetBean {
+    class TopicInfoRetBean {
         @SerializedName("create_time")
-        private String createTime;
+        val createTime: String = ""
         @SerializedName("discuss_num")
-        private String discussNum;
+        val discussNum: String = ""
         @SerializedName("hot_value")
-        private String hotValue;
+        val hotValue: String = ""
         @SerializedName("topic_id")
-        private String topicId;
+        val topicId: String = ""
         @SerializedName("topic_name")
-        private String topicName;
+        val topicName: String = ""
         @SerializedName("topic_desc")
-        private String topicDesc;
-        private String tids;
+        val topicDesc: String = ""
+        val tids: String = ""
         @SerializedName("real_discuss_num")
-        private String realDiscussNum;
-        private TopicInfoRetExtraBean extra;
+        val realDiscussNum: String = ""
+        val extra = TopicInfoRetExtraBean();
     }
 
-    public static class TopicInfoRetExtraBean {
+    class TopicInfoRetExtraBean {
         @SerializedName("head_pic")
-        private String headPic;
+        val headPic: String = ""
         @SerializedName("share_title")
-        private String shareTitle;
+        val shareTitle: String = ""
         @SerializedName("share_pic")
-        private String sharePic;
+        val sharePic: String = ""
         @SerializedName("topic_tid")
-        private String topicTid;
+        val topicTid: String = ""
     }
 }

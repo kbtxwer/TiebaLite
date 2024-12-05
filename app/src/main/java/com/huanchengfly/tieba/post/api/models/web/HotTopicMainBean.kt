@@ -1,173 +1,81 @@
-package com.huanchengfly.tieba.post.api.models.web;
+package com.huanchengfly.tieba.post.api.models.web
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
+import com.huanchengfly.tieba.post.models.ErrorBean
 
-import java.util.List;
-import java.util.Map;
-
-public class HotTopicMainBean extends WebBaseBean<HotTopicMainBean.HotTopicMainDataBean> {
-    public static class HotTopicMainDataBean {
+class HotTopicMainBean : ErrorBean() {
+    class HotTopicMainDataBean {
         @SerializedName("best_info")
-        private BestInfoBean bestInfo;
-
-        public BestInfoBean getBestInfo() {
-            return bestInfo;
-        }
+        val bestInfo = BestInfoBean()
     }
 
-    public static class BestInfoBean {
-        private List<BestInfoRetBean> ret;
-
-        public List<BestInfoRetBean> getRet() {
-            return ret;
-        }
+    class BestInfoBean {
+        val ret = mutableListOf<BestInfoRetBean>()
     }
 
-    public static class BestInfoRetBean {
+    class BestInfoRetBean {
         @SerializedName("common_type")
-        private String commonType;
+        val commonType: String = ""
+
         @SerializedName("module_name")
-        private String moduleName;
+        val moduleName: String = ""
+
         @SerializedName("module_recoms")
-        private List<String> moduleRecoms;
+        val moduleRecoms = mutableListOf<String>()
+
         @SerializedName("thread_list")
-        private Map<String, ThreadBean> threadList;
+        val threadList = mutableMapOf<String, ThreadBean>()
+
         @SerializedName("recom_type")
-        private String recomType;
+        val recomType: String = ""
+
         @SerializedName("topic_id")
-        private String topicId;
-
-        public String getCommonType() {
-            return commonType;
-        }
-
-        public String getModuleName() {
-            return moduleName;
-        }
-
-        public Map<String, ThreadBean> getThreadList() {
-            return threadList;
-        }
-
-        public List<String> getModuleRecoms() {
-            return moduleRecoms;
-        }
-
-        public String getRecomType() {
-            return recomType;
-        }
-
-        public String getTopicId() {
-            return topicId;
-        }
+        val topicId: String = ""
     }
 
-    public static class ThreadBean {
+    class ThreadBean {
         @SerializedName("abstract")
-        private String abstracts;
+        val abstracts: String = ""
+
         @SerializedName("agree_num")
-        private String agreeNum;
-        private String avatar;
+        val agreeNum: String = ""
+        val avatar: String = ""
+
         @SerializedName("create_time")
-        private String createTime;
+        val createTime: String = ""
+
         @SerializedName("forum_id")
-        private String forumId;
+        val forumId: String = ""
+
         @SerializedName("forum_name")
-        private String forumName;
-        private List<MediaBean> media;
+        val forumName: String = ""
+        val media = mutableListOf<MediaBean>()
+
         @SerializedName("name_show")
-        private String nameShow;
+        val nameShow: String = ""
+
         @SerializedName("post_num")
-        private String postNum;
+        val postNum: String = ""
+
         @SerializedName("thread_id")
-        private String threadId;
+        val threadId: String = ""
+
         @SerializedName("user_id")
-        private String userId;
-        private String title;
-
-        public String getAbstracts() {
-            return abstracts;
-        }
-
-        public String getAgreeNum() {
-            return agreeNum;
-        }
-
-        public String getAvatar() {
-            return avatar;
-        }
-
-        public String getCreateTime() {
-            return createTime;
-        }
-
-        public String getForumId() {
-            return forumId;
-        }
-
-        public String getForumName() {
-            return forumName;
-        }
-
-        public List<MediaBean> getMedia() {
-            return media;
-        }
-
-        public String getNameShow() {
-            return nameShow;
-        }
-
-        public String getPostNum() {
-            return postNum;
-        }
-
-        public String getThreadId() {
-            return threadId;
-        }
-
-        public String getUserId() {
-            return userId;
-        }
-
-        public String getTitle() {
-            return title;
-        }
+        val userId: String = ""
+        val title: String = ""
     }
 
-    public static class MediaBean {
+    class MediaBean {
         @SerializedName("big_pic")
-        private String bigPic;
-        private int height;
-        private int width;
+        val bigPic: String = ""
+        val height: Int = 0
+        val width: Int = 0
+
         @SerializedName("small_pic")
-        private String smallPic;
-        private String type;
+        val smallPic: String = ""
+        val type: String = ""
+
         @SerializedName("water_pic")
-        private String waterPic;
-
-        public String getBigPic() {
-            return bigPic;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public String getSmallPic() {
-            return smallPic;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getWaterPic() {
-            return waterPic;
-        }
+        val waterPic: String = ""
     }
-
 }
